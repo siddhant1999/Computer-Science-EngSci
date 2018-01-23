@@ -1,12 +1,48 @@
 class binary_tree:
 	def __init__(self,x):
 		self.s = [x, None, None]
+		self.l = [[]]
 
 	def AddLeft(self, x):
-		self.s[1] = [x]
+		self.s[1] = x
 
 	def AddRight(self, x):
-		self.s[2] = [x] 
+		self.s[2] = x
+
+	def P(self, x, num):
+		if len(self.l) < num:
+			self.l.append([])
+		
+		self.l[num-1]+= [x[0]]
+		
+		if x[1] is not None:
+			self.P(x[1].s, num+1)
+
+		if x[2] is not None:
+			self.P(x[2].s, num+1)
+
+	def Get_LevelOrder(self):
+		self.P(self.s, 1)
+		return reduce(lambda x,y :x+y ,self.l)
+
+	def sel(self, node):
+		print "rec->", node
+		#convert this level of the tree to a binary tree
+		x=[node[0],[]]
+		curnode = node[1]#lefttree
+		while curnode != [] and curnode != None:
+			x[1].append(self.sel(curnode.s))
+			curnode=curnode.s[2]
+
+			#meaning it has a child, therefore look for siblings
+			#go right all the way down the tree
+
+		return x
+		#return the left subtree
+				
+	def ConvertToTree(self):
+		self.store =[None,[]]
+		print self.sel(self.s)
 
 	
 
@@ -23,20 +59,21 @@ class tree:
     def P(self, x, num):
     	if len(self.l) < num:
     		self.l.append([])
-    	# print x
-    	# print x[1]
-    	# print x[1][0].store
     	y=x[1]
     	print x[0]
     	self.l[num-1]+= [x[0]]
-    	# print self.P(y[0].store)
+
     	for i in range(len(y)):
     		for j in range(num):
     			print "->",
     		self.P(y[i].store, num+1)
 
+    def Get_LevelOrder(self):
+    	P(self.store, 1)
+    	return reduce(lambda x,y :x+y ,self.l)
+
     def hel(self, val, left_tree, right_tree):
-		print val, "<<>>" , left_tree, "<<>>", right_tree 
+		#print val, "<<>>" , left_tree, "<<>>", right_tree 
 		x= [val, None, None]
 		y=left_tree[1]#this is a list of list of trees
 		z= right_tree
@@ -83,10 +120,29 @@ q.AddSuccessor(r)
 
 q.P(q.store, 1)
 print q.l
-print reduce(lambda x,y :x+y ,q.l)
+
 
 k= tree(1)
 p = k.hel(q.store[0], q.store, [])
 print "Here -->: ", p
 
+a =binary_tree(1)
+b = binary_tree(2)
+c = binary_tree(3)
+d = binary_tree(4)
+e = binary_tree(5)
+f = binary_tree(6)
+g = binary_tree(7)
+
+e.AddRight(f)
+b.AddLeft(e)
+
+c.AddLeft(g)
+c.AddRight(d)
+b.AddRight(c)
+a.AddLeft(b)
+
+print a.Get_LevelOrder()
+print "Converting to Tree"
+a.ConvertToTree()
 
