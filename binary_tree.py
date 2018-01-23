@@ -1,4 +1,58 @@
+from tree import *
 from binary_tree import *
+class tree:
+    def __init__(self,x):
+    		
+        self.store = [x,[]]
+        self.l = [[]]
+
+    def AddSuccessor(self,x):
+        self.store[1] = self.store[1] + [x]
+		# print x.store[1][1].store
+        return True
+
+    def P(self, x, num):
+    	if len(self.l) < num:
+    		self.l.append([])
+
+    	y=x[1]
+    	#print x[0]
+    	if type(x[0])!=list:
+    		self.l[num-1]+= [x[0]]
+
+    	for i in range(len(y)):
+    		#for j in range(num):
+    			#print "->",
+    		self.P(y[i].store, num+1)
+
+    def Get_LevelOrder(self):
+    	self.P(self.store, 1)
+    	return reduce(lambda x,y :x+y ,self.l)
+
+    def ConvertToBinaryTree(self):
+    	p=  self.hel(self.store[0], self.store, [])
+    	y=binary_tree(p)
+    	return y
+
+
+    def hel(self, val, left_tree, right_tree):
+		#print val, "<<>>" , left_tree, "<<>>", right_tree 
+		x= [val, None, None]
+		y=left_tree[1]#this is a list of list of trees
+		z= right_tree
+		if (y):
+			x[1] = self.hel(y[0].store[0], y[0].store, y[1:])
+
+		if len(z) == 0:
+			x[2] = None;
+		else:
+			x[2] = self.hel(z[0].store[0], z[0].store, z[1:])
+		return x
+
+
+
+
+
 class binary_tree:
 	def __init__(self,x):
 		if type(x)==list:
@@ -64,55 +118,5 @@ class binary_tree:
 			return y
 			#print "y", y.store[1]
 			return y
-class tree:
-    def __init__(self,x):
-    		
-        self.store = [x,[]]
-        self.l = [[]]
 
-    def AddSuccessor(self,x):
-        self.store[1] = self.store[1] + [x]
-		# print x.store[1][1].store
-        return True
-
-    def P(self, x, num):
-    	if len(self.l) < num:
-    		self.l.append([])
-
-    	y=x[1]
-    	#print x[0]
-    	if type(x[0])!=list:
-    		self.l[num-1]+= [x[0]]
-
-    	for i in range(len(y)):
-    		#for j in range(num):
-    			#print "->",
-    		self.P(y[i].store, num+1)
-
-    def Get_LevelOrder(self):
-    	self.P(self.store, 1)
-    	return reduce(lambda x,y :x+y ,self.l)
-
-    def ConvertToBinaryTree(self):
-    	p=  self.hel(self.store[0], self.store, [])
-    	y=binary_tree(p)
-    	return y
-
-
-    def hel(self, val, left_tree, right_tree):
-		#print val, "<<>>" , left_tree, "<<>>", right_tree 
-		x= [val, None, None]
-		y=left_tree[1]#this is a list of list of trees
-		z= right_tree
-		if (y):
-			x[1] = self.hel(y[0].store[0], y[0].store, y[1:])
-
-		if len(z) == 0:
-			x[2] = None;
-		else:
-			x[2] = self.hel(z[0].store[0], z[0].store, z[1:])
-		return x
-
-
-
-
+	
