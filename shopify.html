@@ -1,0 +1,121 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+
+
+	</head>
+	<body>
+
+		<div class="elements">
+			<p id="newsletter_title">Stay up to date with ecommerce trends with Shopify’s newsletter</p>
+			<hr color="#7AB55C" align="left" width="5%">
+		</div>
+		<div class="elements">
+			<p id="marketing_label">Subscribe for free marketing tips</p>
+		
+			<div id="input_fields">
+				<input onKeyDown="if(event.keyCode==13) check();" class="form-control" id="email_field" type="email" pattern="[^ @]*@[^ @]*" placeholder="Email Address">
+				<select id="interest" class="selectpicker" multiple title="Interested in..." >
+  					<option>Clothing Industry</option>
+  					<option>Electronics Industry</option>
+  					<option>Food Industry</option>
+				</select>
+				<p id="is_valid"></p>
+				<button id="submit_button" class=" btn btn-primary btn-md" type="button" onclick="check()">Sign up now</button>
+			</div>
+		</div>
+		<a id="link" href=""><u>Unsubscribe</u></a>
+	</body>
+</html>
+
+<style>
+body {
+	height: 100%;
+	width: 100%;
+	background-color: #000639;
+}
+#newsletter_title {
+	font-size: 24px;
+	text-align: left;
+	color: white;
+	
+	font-family: Helvetica;
+	
+}
+#marketing_label {
+	font-weight:lighter;
+	font-size: 16px;
+	text-align: left;
+	color: white;
+	font-family: Helvetica;
+}
+.elements {
+	margin: 50px auto auto auto;
+	width:60%;
+}
+#email_field {
+	width:60%;
+}
+#interest {
+	width: 40%;
+}
+hr {
+	height: 2px;
+	border-top: 0px;
+}
+input {
+	font-size: 16px;
+	font-family: Helvetica;
+}
+form {
+	display: inline;
+}
+.form-control {
+	display: inline;
+}
+#submit_button {
+	width: 100%;
+	background-color: #5c6ac4;
+	margin-top: 10px;
+}
+.bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
+    width: 39%;
+}
+#is_valid {
+	color: #C23628;
+}
+#link {
+	bottom: 0;
+	right: 0;
+    left: 0;
+    margin-right: auto;
+    margin-left: auto;
+	text-align: center;
+	position: fixed;
+	color: white;
+}
+</style>
+<script type="text/javascript">
+	function check(){
+		var str =document.getElementById("email_field").value;
+		if(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(str)){
+			console.log(str);
+			document.getElementById("email_field").value = ""
+			document.getElementById("is_valid").innerHTML = ""
+		}
+		else {
+			document.getElementById("is_valid").innerHTML = "Please enter a valid email address"
+		}
+
+	}
+</script>
