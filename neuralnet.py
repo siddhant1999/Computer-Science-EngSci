@@ -17,9 +17,6 @@ class NeuralNet():
 	def forward(self):
 		neurons=[2,3,3,1]
 		print "*"
-		print "*"
-		print "*"
-		print "*"
 		for i in range(1,4):
 			for j in range(neurons[i]):
 				s= 0
@@ -28,6 +25,9 @@ class NeuralNet():
 				self.n[i][j] = np.tanh(s)
 		print "n: ", self.n
 		
+	def backwards(self, ans):
+		err = np.absolute(ans-self.n[3][0])
+
 
 
 
