@@ -15,6 +15,25 @@ def GetPlayerPositions(board,player):
 '''Write the function GetPieceLegalMoves(board,position)
    which will return a list of all legal positions that the piece in
    the given position can take.'''
+
+def inCheck(board, colour):
+	#let's us first check if white king is in danger
+	#first determine where the white king is
+
+	king = colour+5
+
+	for i in range(len(board)):
+		if board[i] == king:
+			pos = i
+			break
+
+	for i in range(len(board)):
+		if isWhite(board[i]) != isWhite(king):
+			o = GetPieceLegalMoves(board, i)
+			if pos in o:
+				return True
+	return False
+
 def isWhite(n):
 	if n >= 10 and n < 20:
 		return True
@@ -67,7 +86,7 @@ def GetPieceLegalMoves(board,position):
 
 		return l
 
-	if p == 3:
+	if p == 3 or p == 4:
 		#rook
 		pos = position+1
 		row=position/8
@@ -170,7 +189,7 @@ def GetPieceLegalMoves(board,position):
 				l.append(position-15)
 		return l
 		
-	if p==2:
+	if p==2 or p==4:
 		pos = position+9
 		row=position/8
 		while(isValid(pos)):
@@ -233,17 +252,35 @@ def GetPieceLegalMoves(board,position):
 
 			pos-=7
 		return l
+	if p == 5:
+		#make sure to check if this king move puts the king in danger
+		for i in range(-1, 2):
+			for j in range(-1, 2):
+				k = 8*j
+				pos = position+i+k
+				
+				if (j == 0 and i ==0) or not isValid(pos):
+					continue
+				if isWhite(board[pos]) == isWhite(board[position]):
+					continue
+				t= list(board)
+				t[position] =0
+				t[pos] = board[position]
+				if not inCheck(t, board[position]-5):
+					l.append(pos)
+		return l
 
 			
 
-s = [13, 11, 12, 14, 15, 12, 11, 13,
-	10,10,10,10,10,10,10,10,
-	0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,
-	0,0,0,0,11,0,0,0,
-	0,0,0,0,0,0,0,0,
-	20,20,20,20,20,20,20,20,
+s = [
+	13, 11, 12, 14, 15, 12, 11, 13,
+	10, 10, 10, 10, 10, 10, 10, 10,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	20, 20, 20, 20, 20, 20, 20, 20,
 	23, 21, 22, 24, 25, 22, 21, 23,
 	]
-print GetPieceLegalMoves(s,2)
+print GetPieceLegalMoves(s,4)
 
