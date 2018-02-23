@@ -170,6 +170,69 @@ def GetPieceLegalMoves(board,position):
 				l.append(position-15)
 		return l
 		
+	if p==2:
+		pos = position+9
+		row=position/8
+		while(isValid(pos)):
+			#right down
+
+			if board[pos] == 0:
+				l.append(pos)
+				pos+=9
+				continue
+			if isWhite(board[position]) == isWhite(board[pos]):
+				break
+			else:
+				l.append(pos)
+				break
+
+			pos+=9
+
+		pos = position-9
+		while(isValid(pos)):
+			#left up
+			if board[pos] == 0:
+				l.append(pos)
+				pos-=9
+				continue
+			if isWhite(board[position]) == isWhite(board[pos]):
+				break
+			else:
+				l.append(pos)
+				break
+
+			pos-=9
+
+		pos = position+7
+		while(isValid(pos)):
+			#left down
+			if board[pos] == 0:
+				l.append(pos)
+				pos+=7
+				continue
+			if isWhite(board[position]) == isWhite(board[pos]):
+				break
+			else:
+				l.append(pos)
+				break
+
+			pos+=7
+
+		pos = position-7
+		while(isValid(pos)):
+			#down
+			if board[pos] == 0:
+				l.append(pos)
+				pos-=7
+				continue
+			if isWhite(board[position]) == isWhite(board[pos]):
+				break
+			else:
+				l.append(pos)
+				break
+
+			pos-=7
+		return l
 
 			
 
@@ -177,10 +240,10 @@ s = [13, 11, 12, 14, 15, 12, 11, 13,
 	10,10,10,10,10,10,10,10,
 	0,0,0,0,0,0,0,0,
 	0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,
+	0,0,0,0,11,0,0,0,
 	0,0,0,0,0,0,0,0,
 	20,20,20,20,20,20,20,20,
 	23, 21, 22, 24, 25, 22, 21, 23,
 	]
-print GetPieceLegalMoves(s,1)
+print GetPieceLegalMoves(s,2)
 
