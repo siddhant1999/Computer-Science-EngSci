@@ -23,7 +23,7 @@ class NeuralNet():
 		#set the neuron values
 		for p in range(len(firstLayer)):
 			self.n[0][p] = firstLayer[p]
-		self.neurons=[2,3,3,1]
+		self.neurons=[2,3,1]
 
 		bias = np.random.uniform(low=-1, high=1, size=(3))
 		# the size of the bias array is one less than the number of layers
@@ -40,10 +40,10 @@ class NeuralNet():
 					s+= self.n[i-1][k] * self.w[i-1][k][j]
 				self.n[i][j] = self.sigmoid(s)
 		#print "n: ", self.n
-		'''print "-------------------------------------------"
+		print "-------------------------------------------"
 		print self.w
 		print "*******************************************"
-		print self.n'''
+		print self.n
 
 	def outputLayer(self, ans):
 		#in this case ans in the vector of outputs and must be of equal size to the last element of the neurons array
@@ -55,6 +55,7 @@ class NeuralNet():
 		deltaList=[]
 		for i in range(self.neurons[-1]):
 			target = ans[i]
+			print "target: ", target, self.n[len(self.neurons)-1][i]
 			val = self.n[len(self.neurons)-1][i]
 			totError += (target-val)*(target-val)/2.0
 			#now that we have a neuron we are working with we should itterate over all the neurons
@@ -73,11 +74,12 @@ class NeuralNet():
 		self.backprop(len(self.neurons)-2, deltaList)
 
 	def backprop(self, layer, prev_deltas):
+		print "layer", layer
 
 		if layer == 0:
 			self.w = self.dup.copy()
 			return
-
+		print "here"
 		newdeltaList = []
 		for i in range(self.neurons[layer]):
 			val = self.n[layer][i]
@@ -97,6 +99,7 @@ class NeuralNet():
 			for k in range(self.neurons[layer-1]):
 				neuron = self.n[layer-1][k]
 				weight = self.w[layer-1][k][i]
+				print "values:", weight, self.learning_rate, neuron, delta, weight - self.learning_rate * neuron * delta
 				self.dup[layer-1][k][i] = weight - self.learning_rate * neuron * delta
 
 		self.backprop(layer-1, newdeltaList)
@@ -120,6 +123,10 @@ for i in range(len(a)):
 
 
 x = NeuralNet(a, b)
+x.forward(a[0])
+x.outputLayer(b[0])
+
+exit()
 
 for i in range(len(a)):
 	x.forward(a[i])
