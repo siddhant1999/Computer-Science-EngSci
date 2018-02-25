@@ -12,8 +12,8 @@ class NeuralNet():
 		self.w= np.random.uniform(low=-1, high=1, size=(3,3,3))
 		self.n= [[0 for j in range(3)] for i in range(4)]
 		#self.n[0][0]=1
-		print self.w
-		print self.n
+		#print self.w
+		#print self.n
 
 	def sigmoid(self, x):
 		return 1 / (1 + math.exp(-x))
@@ -25,7 +25,7 @@ class NeuralNet():
 			self.n[0][p] = firstLayer[p]
 		self.neurons=[2,3,3,1]
 
-		bias = np.random.uniform(low=-1, high=1, size=(3))
+		#bias = np.random.uniform(low=-1, high=1, size=(3))
 		# the size of the bias array is one less than the number of layers
 		#print "*"
 
@@ -39,6 +39,7 @@ class NeuralNet():
 					#k is the neuron in the previous layer
 					s+= self.n[i-1][k] * self.w[i-1][k][j]
 				self.n[i][j] = self.sigmoid(s)
+		#print self.n[len(self.neurons)-1][0]
 		#print "n: ", self.n
 		'''print "-------------------------------------------"
 		print self.w
@@ -69,7 +70,8 @@ class NeuralNet():
 		#this takes care of the first set
 		#simply provide a list of the Eoi/doutoi which is just delta
 		#print "Error:", totError
-		print totError
+		#print np.round(totError*100, decimals=1)
+		print np.round(totError, decimals=4)
 		self.backprop(len(self.neurons)-2, deltaList)
 
 	def backprop(self, layer, prev_deltas):
@@ -108,13 +110,13 @@ class NeuralNet():
 #a = [[1,0],[0,1],[1,1],[1,0],[0,0],[1,1],[0,1],[0,0]]
 #b= [[1],[1],[0],[1],[0],[0],[1],[0]]
 
-a = np.random.randint(low=1, high=2, size=(100,2), dtype='l')
+a = np.random.randint(low=0, high=2, size=(10000,2), dtype='l')
 b=[]
 for i in range(len(a)):
 	if a[i][0] == a[i][1]:
-		b.append([0.7])
+		b.append([0])
 	else:
-		b.append([0.7])
+		b.append([1])
 # print a[1:100]
 # print b[1:100]
 
@@ -122,5 +124,7 @@ for i in range(len(a)):
 x = NeuralNet(a, b)
 
 for i in range(len(a)):
+	#print a[i], b[i],
 	x.forward(a[i])
+
 	x.outputLayer(b[i])
