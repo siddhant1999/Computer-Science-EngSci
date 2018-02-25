@@ -11,9 +11,11 @@ class NeuralNet():
 		self.outp = outp
 		self.w= np.random.uniform(low=-1, high=1, size=(3,3,3))
 		self.n= [[0 for j in range(3)] for i in range(4)]
+		self.w[0][0][0] = 0
+		self.w[0][1][0] = 0
 		#self.n[0][0]=1
 		print self.w
-		print self.n
+		#rint self.n
 
 	def sigmoid(self, x):
 		return 1 / (1 + math.exp(-x))
@@ -23,13 +25,9 @@ class NeuralNet():
 		#set the neuron values
 		for p in range(len(firstLayer)):
 			self.n[0][p] = firstLayer[p]
-		self.neurons=[2,3,3,1]
+		self.neurons=[2,1]
 
-		bias = np.random.uniform(low=-1, high=1, size=(3))
-		# the size of the bias array is one less than the number of layers
-		#print "*"
-
-		for i in range(1,len(self.neurons)):
+		for i in range(1,2):
 			#i is layer number
 			for j in range(self.neurons[i]):
 				#j is the neuron in this layer
@@ -37,8 +35,10 @@ class NeuralNet():
 				s=0
 				for k in range(self.neurons[i-1]):
 					#k is the neuron in the previous layer
+					#print "neuron value:", self.n[i-1][k], "weight:", self.w[i-1][k][j]
 					s+= self.n[i-1][k] * self.w[i-1][k][j]
 				self.n[i][j] = self.sigmoid(s)
+				#print "n:", self.n[i][j]
 		#print "n: ", self.n
 		'''print "-------------------------------------------"
 		print self.w
@@ -55,54 +55,26 @@ class NeuralNet():
 		deltaList=[]
 		for i in range(self.neurons[-1]):
 			target = ans[i]
-			val = self.n[len(self.neurons)-1][i]
+			#print "target: ", target, self.n[1][i]
+			val = self.n[1][i]
 			totError += (target-val)*(target-val)/2.0
 			#now that we have a neuron we are working with we should itterate over all the neurons
 			delta = (val-target)*val*(1-val)
+			#print "delta:", delta
 			deltaList.append(delta)
 			for j in range(self.neurons[-2]):
-				l = len(self.neurons)-2
-				neuron = self.n[l][j] #weight from neuron j in layer -1 (last element) to the ith neuron of the next layer
-				weight = self.w[l][j][i]
-				self.dup[l][j][i] = weight-self.learning_rate * delta * neuron
+				neuron = self.n[0][j] #weight from neuron j in layer -1 (last element) to the ith neuron of the next layer
+				weight = self.w[0][j][i]
+				#print "neuron:", neuron, "weight:", weight
+				#print "self.learning_rate * delta * neuron: ", self.learning_rate * delta * neuron
+				self.dup[0][j][i] = weight-self.learning_rate * delta * neuron
 				
+		self.w=self.dup.copy()
 		#this takes care of the first set
 		#simply provide a list of the Eoi/doutoi which is just delta
 		#print "Error:", totError
+		
 		print totError
-		self.backprop(len(self.neurons)-2, deltaList)
-
-	def backprop(self, layer, prev_deltas):
-
-		if layer == 0:
-			self.w = self.dup.copy()
-		return
-
-		newdeltaList = []
-		for i in range(self.neurons[layer]):
-			val = self.n[layer][i]
-			deltasum = 0
-
-			for j in range(self.neurons[layer+1]):
-				if self.neurons[layer+1] != len(prev_deltas):
-					print "OMG BAD"
-					exit()
-				weight = self.w[layer][i][j]
-				eoi = prev_deltas[j]*weight
-				deltasum+= eoi
-
-			delta = deltasum*val*(1-val)
-			newdeltaList.append(delta)
-			#now itterate over every previous weight and modify it
-			for k in range(self.neurons[layer-1]):
-				neuron = self.n[layer-1][k]
-				weight = self.w[layer-1][k][i]
-				self.dup[layer-1][k][i] = weight - self.learning_rate * neuron * delta
-
-		self.backprop(layer-1, newdeltaList)
-
-
-
 
 
 #a = [[1,0],[0,1],[1,1],[1,0],[0,0],[1,1],[0,1],[0,0]]
