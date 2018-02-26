@@ -37,7 +37,7 @@ class NeuralNet():
 			for j in range(self.neurons[i]):
 				#j is the neuron in this layer
 				#s= bias[i-1]
-				s=bias_w[i-1][j]
+				s=self.bias_w[i-1][j]
 				for k in range(self.neurons[i-1]):
 					#k is the neuron in the previous layer
 					s+= self.n[i-1][k] * self.w[i-1][k][j]
@@ -58,7 +58,7 @@ class NeuralNet():
 			print "*error*"
 			return
 		deltaList=[]
-		for i in range(self.neurons[-1]):
+		for i in range(self.neurons[-1]):#go through every neuron in the final layer
 			target = ans[i]
 			val = self.n[len(self.neurons)-1][i]
 			totError += (target-val)*(target-val)/2.0
@@ -70,6 +70,7 @@ class NeuralNet():
 				neuron = self.n[l][j] #weight from neuron j in layer -1 (last element) to the ith neuron of the next layer
 				weight = self.w[l][j][i]
 				self.dup[l][j][i] = weight-self.learning_rate * delta * neuron
+			self.bias_w[len(self.neurons)-2][i] -= self.learning_rate * delta# don't * neuron becuase the neuron value of bias is always 1
 				
 		#this takes care of the first set
 		#simply provide a list of the Eoi/doutoi which is just delta
@@ -104,7 +105,7 @@ class NeuralNet():
 				neuron = self.n[layer-1][k]
 				weight = self.w[layer-1][k][i]
 				self.dup[layer-1][k][i] = weight - self.learning_rate * neuron * delta
-
+			self.bias_w[layer-1][i] -= self.learning_rate*delta # I really hope this works
 		self.backprop(layer-1, newdeltaList)
 
 
