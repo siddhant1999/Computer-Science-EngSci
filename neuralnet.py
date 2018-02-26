@@ -4,7 +4,7 @@ import math
 class NeuralNet():
 	inp = []
 	outp = []
-	learning_rate=1
+	learning_rate=0.1
 
 	def __init__(self, inp, outp):
 		self.inp = inp
@@ -26,6 +26,9 @@ class NeuralNet():
 		self.neurons=[2,3,3,1]
 
 		#bias = np.random.uniform(low=-1, high=1, size=(3))
+		self.bias_w = np.random.uniform(low=-1, high=1, size=(len(self.neurons)-1, max(self.neurons)))
+		#bias[layer][destination_neuron]
+		#this way you won't run into issues when increasing the size
 		# the size of the bias array is one less than the number of layers
 		#print "*"
 
@@ -34,10 +37,12 @@ class NeuralNet():
 			for j in range(self.neurons[i]):
 				#j is the neuron in this layer
 				#s= bias[i-1]
-				s=0
+				s=self.bias_w[i-1][j]
+				#s=0
 				for k in range(self.neurons[i-1]):
 					#k is the neuron in the previous layer
 					s+= self.n[i-1][k] * self.w[i-1][k][j]
+
 				self.n[i][j] = self.sigmoid(s)
 		#print self.n[len(self.neurons)-1][0]
 		#print "n: ", self.n
@@ -54,7 +59,7 @@ class NeuralNet():
 			print "*error*"
 			return
 		deltaList=[]
-		for i in range(self.neurons[-1]):
+		for i in range(self.neurons[-1]):#go through every neuron in the final layer
 			target = ans[i]
 			val = self.n[len(self.neurons)-1][i]
 			totError += (target-val)*(target-val)/2.0
@@ -66,6 +71,7 @@ class NeuralNet():
 				neuron = self.n[l][j] #weight from neuron j in layer -1 (last element) to the ith neuron of the next layer
 				weight = self.w[l][j][i]
 				self.dup[l][j][i] = weight-self.learning_rate * delta * neuron
+			self.bias_w[len(self.neurons)-2][i] -= self.learning_rate * delta# don't * neuron becuase the neuron value of bias is always 1
 				
 		#this takes care of the first set
 		#simply provide a list of the Eoi/doutoi which is just delta
@@ -100,7 +106,7 @@ class NeuralNet():
 				neuron = self.n[layer-1][k]
 				weight = self.w[layer-1][k][i]
 				self.dup[layer-1][k][i] = weight - self.learning_rate * neuron * delta
-
+			self.bias_w[layer-1][i] -= self.learning_rate*delta # I really hope this works
 		self.backprop(layer-1, newdeltaList)
 
 
@@ -128,3 +134,6 @@ for i in range(len(a)):
 	x.forward(a[i])
 
 	x.outputLayer(b[i])
+
+#print x.bias_w
+
