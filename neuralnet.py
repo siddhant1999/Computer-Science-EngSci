@@ -26,6 +26,9 @@ class NeuralNet():
 		self.neurons=[2,3,3,1]
 
 		#bias = np.random.uniform(low=-1, high=1, size=(3))
+		self.bias_w = np.random.uniform(low=-1, high=1, size=(self.neurons-1, max(self.neurons)))
+		#bias[layer][destination_neuron]
+		#this way you won't run into issues when increasing the size
 		# the size of the bias array is one less than the number of layers
 		#print "*"
 
@@ -34,10 +37,11 @@ class NeuralNet():
 			for j in range(self.neurons[i]):
 				#j is the neuron in this layer
 				#s= bias[i-1]
-				s=0
+				s=bias_w[i-1][j]
 				for k in range(self.neurons[i-1]):
 					#k is the neuron in the previous layer
 					s+= self.n[i-1][k] * self.w[i-1][k][j]
+
 				self.n[i][j] = self.sigmoid(s)
 		#print self.n[len(self.neurons)-1][0]
 		#print "n: ", self.n
