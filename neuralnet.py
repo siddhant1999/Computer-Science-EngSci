@@ -4,7 +4,7 @@ import math
 class NeuralNet():
 	inp = []
 	outp = []
-	learning_rate=1
+	learning_rate=0.1
 
 	def __init__(self, inp, outp):
 		self.inp = inp
@@ -26,7 +26,7 @@ class NeuralNet():
 		self.neurons=[2,3,3,1]
 
 		#bias = np.random.uniform(low=-1, high=1, size=(3))
-		self.bias_w = np.random.uniform(low=-1, high=1, size=(self.neurons-1, max(self.neurons)))
+		self.bias_w = np.random.uniform(low=-1, high=1, size=(len(self.neurons)-1, max(self.neurons)))
 		#bias[layer][destination_neuron]
 		#this way you won't run into issues when increasing the size
 		# the size of the bias array is one less than the number of layers
@@ -38,6 +38,7 @@ class NeuralNet():
 				#j is the neuron in this layer
 				#s= bias[i-1]
 				s=self.bias_w[i-1][j]
+				#s=0
 				for k in range(self.neurons[i-1]):
 					#k is the neuron in the previous layer
 					s+= self.n[i-1][k] * self.w[i-1][k][j]
@@ -133,3 +134,6 @@ for i in range(len(a)):
 	x.forward(a[i])
 
 	x.outputLayer(b[i])
+
+#print x.bias_w
+
