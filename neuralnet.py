@@ -4,7 +4,7 @@ import math
 class NeuralNet():
 	inp = []
 	outp = []
-	learning_rate=2
+	learning_rate=1
 
 	def __init__(self, inp, outp):
 		self.inp = inp
