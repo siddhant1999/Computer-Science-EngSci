@@ -7,10 +7,17 @@ def printBoard(board):
 		if i%8==0:
 			print "\n"
 		if board[i] == 0:
-			if i%2:
-				print "#",
+			if (i/8)%2:
+				if i%2:
+					print "#",
+				else:
+					print ".",
 			else:
-				print ".",
+				if i%2:
+					print ".",
+				else:
+					print "#",
+
 		elif board[i]%10 == 0:
 			if isWhite(board[i]):
 				print "P",
@@ -51,7 +58,7 @@ def printBoard(board):
 def GetPlayerPositions(board,player):
 	l =[]
 	for x in range(len(board)):
-		if board[x] >= player and board[x] <= player+10:
+		if isWhite(board[x]) == isWhite(player):
 			l.append(x)
 
 	return l
@@ -64,49 +71,8 @@ Write the function IsPositionUnderThreat(board,position,player)
    which will return True if the position is under threat by the opponent
    of the given player
    '''
-def IsPositionUnderThreat(board,position,player):
-	for i in range(len(board)):
-		if isWhite(board[i]) != isWhite(position):
-			o = GetPieceLegalMoves(board, i)
-			if position in o:
-				return True
-	return False
 
-def inCheck(board, colour):
-	#let's us first check if white king is in danger
-	#first determine where the white king is
-
-	king = colour+5
-
-	for i in range(len(board)):
-		if board[i] == king:
-			pos = i
-			break
-
-	for i in range(len(board)):
-		if isWhite(board[i]) != isWhite(king):
-			o = GetPieceLegalMoves(board, i)
-			if pos in o:
-				return True
-	return False
-
-def isWhite(n):
-	if n >= 10 and n < 20:
-		return True
-	return False
-
-def isValid(num):
-	if num>= 0 and num<64:
-		return True
-	return False
-
-
-def GetPieceLegalMoves(board,position):
-	'''
-	okay this section will not be easy
-	let's do it one type of piece at a time
-	'''
-
+def Helper(board, position):
 	p = board[position]%10 #this is the piece
 	l=[]
 	if p == 0:
@@ -120,11 +86,11 @@ def GetPieceLegalMoves(board,position):
 
 			#capture
 			if position+7 < 64:
-				if isWhite(board[position+7]) != isWhite(board[position]):
+				if isWhite(board[position+7]) != isWhite(board[position]) and board[position+7] != 0:
 					l.append(position+7)
 
 			if position+9 < 64:
-				if isWhite(board[position+9]) != isWhite(board[position]):
+				if isWhite(board[position+9]) != isWhite(board[position]) and board[position+7] != 0:
 					l.append(position+9)	
 		else:
 			if position<=7:
@@ -133,17 +99,15 @@ def GetPieceLegalMoves(board,position):
 				l.append(position-8)
 			#capture
 			if position-7 >= 0:
-				if isWhite(board[position-7]) != isWhite(board[position]):
+				if isWhite(board[position-7]) != isWhite(board[position]) and board[position+7] != 0:
 					l.append(position-7)
 
 			if position-9 >= 0:
-				if isWhite(board[position-9]) != isWhite(board[position]):
+				if isWhite(board[position-9]) != isWhite(board[position]) and board[position+7] != 0:
 					l.append(position-9)
 
-		return l
-
 	if p == 3 or p == 4:
-		#rook
+		#rook or queen
 		pos = position+1
 		row=position/8
 		while(pos/8== row and isValid(pos)):
@@ -205,7 +169,6 @@ def GetPieceLegalMoves(board,position):
 				break
 
 			pos-=8
-		return l
 
 	if p == 1:
 		#knight, horsey
@@ -246,6 +209,7 @@ def GetPieceLegalMoves(board,position):
 		return l
 		
 	if p==2 or p==4:
+		#bishop or queen
 		pos = position+9
 		row=position/8
 		while(isValid(pos)):
@@ -307,13 +271,90 @@ def GetPieceLegalMoves(board,position):
 				break
 
 			pos-=7
-		return l
-	if p == 5:
+
+	
+	return l
+
+def GetHit(board, position, target):
+	#it is very important to note that this a line of fire problem, as actually making this move may put the opponent in check themselves
+
+	lis = Helper(board, position)#everything that the board[position] piece can hit
+	if target in lis:
+		return True
+	return False
+
+
+
+def IsPositionUnderThreat(board,position,player):
+	for i in range(len(board)):
+		if isWhite(board[i]) != isWhite(position):
+			l =GetPieceLegalMoves(board, i)
+			if position in l:
+				return True
+	return False
+
+
+def inCheck(board, colour):
+	#let's us first check if white king is in danger
+	#first determine where the white king is
+
+	king = colour+5
+
+	for i in range(len(board)):
+		if board[i] == king:
+			pos = i
+			break
+	#pos is the position of my king
+	for i in range(len(board)):
+		if isWhite(board[i]) != isWhite(pos):
+			if GetHit(board, i, pos):
+				return True
+				#meaning if the king is here it will be taken
+
+	
+		return True
+	for i in range(len(board)):
+		if isWhite(board[i]) == isWhite(king):
+			continue
+		if board[i]%10 == 5:
+			#found the other king
+			for z in range(-1, 2):
+				for q in range(-1, 2):
+					k = 8*q
+					possi = i+z+q
+					if i/8 != (i+z)/8:
+						continue#so that lateral movement doesn't put you on the other side of the board
+					
+					if (q == 0 and z ==0) or not isValid(possi):
+						continue
+					if possi == pos:
+						return True
+					#thus the other king
+					#check if in my minesweeper
+	return False
+
+def isWhite(n):
+	if n >= 10 and n < 20:
+		return True
+	return False
+
+def isValid(num):
+	if num>= 0 and num<64:
+		return True
+	return False
+
+
+def GetPieceLegalMoves(board,position):
+	l=[]
+	if board[position]%10 == 5:
 		#make sure to check if this king move puts the king in danger
 		for i in range(-1, 2):
 			for j in range(-1, 2):
 				k = 8*j
 				pos = position+i+k
+
+				if position/8 != (position+i)/8:
+					continue#so that lateral movement doesn't put you on the other side of the board
 				
 				if (j == 0 and i ==0) or not isValid(pos):
 					continue
@@ -325,6 +366,23 @@ def GetPieceLegalMoves(board,position):
 				if not inCheck(t, board[position]-5):
 					l.append(pos)
 		return l
+	else:
+
+		l = Helper(board, position)
+		print l
+	#check if by setting the value of board[position] to 0 and then set board[l[i]] to board[position] and check if in check
+	#return l
+
+	actual_l = []
+	for i in range(len(l)):
+		t= list(board)
+		t[position] =0
+		t[l[i]]=board[position]
+
+		if(not inCheck(t, (position/10)*10)):
+			actual_l.append(l[i])
+	return actual_l
+
 
 def letsPlay(board, player):
 	printBoard(board)
@@ -366,5 +424,6 @@ s = [
 	]
 #print GetPieceLegalMoves(s,4)
 #printBoard(s)
-
-letsPlay(s, 10)
+# if a move puts you, or keeps you in check you cannot make that move
+#letsPlay(s, 10)
+print GetPieceLegalMoves(s, 10)
