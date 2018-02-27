@@ -277,7 +277,7 @@ def Helper(board, position):
 
 def GetHit(board, position, target):
 	#it is very important to note that this a line of fire problem, as actually making this move may put the opponent in check themselves
-
+	#can board[target] be hit by board[position]
 	lis = Helper(board, position)#everything that the board[position] piece can hit
 	if target in lis:
 		return True
@@ -304,15 +304,16 @@ def inCheck(board, colour):
 		if board[i] == king:
 			pos = i
 			break
+	#print pos
 	#pos is the position of my king
 	for i in range(len(board)):
-		if isWhite(board[i]) != isWhite(pos):
+		if isWhite(board[i]) != isWhite(board[pos]):
 			if GetHit(board, i, pos):
 				return True
 				#meaning if the king is here it will be taken
 
+	print "still here"
 	
-		return True
 	for i in range(len(board)):
 		if isWhite(board[i]) == isWhite(king):
 			continue
@@ -422,8 +423,20 @@ s = [
 	20, 20, 20, 20, 20, 20, 20, 20,
 	23, 21, 22, 24, 25, 22, 21, 23,
 	]
+
+t = [
+	13, 11, 12, 15, 14, 12, 11, 13,
+	10, 10, 10, 12, 10, 10, 10, 10,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	20, 20, 20,  0, 20, 20, 20, 20,
+	23, 21, 22, 24, 25, 22, 21, 23,
+	]
 #print GetPieceLegalMoves(s,4)
 #printBoard(s)
 # if a move puts you, or keeps you in check you cannot make that move
 #letsPlay(s, 10)
-print GetPieceLegalMoves(s, 10)
+print GetPieceLegalMoves(t, 11)
+printBoard(t)
