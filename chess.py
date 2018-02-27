@@ -312,7 +312,6 @@ def inCheck(board, colour):
 				return True
 				#meaning if the king is here it will be taken
 
-	print "still here"
 	
 	for i in range(len(board)):
 		if isWhite(board[i]) == isWhite(king):
