@@ -2,6 +2,8 @@
    where board is the list data struct that represents the chess board
    (described above) and player is 10 (for white) and 20 (for black).
    It should return a list of all positions that the player occupies.'''
+
+#need to implement a alpha beta pruning method of determining successful moves
 def printBoard(board):
 	for i in range(len(board)):
 		if i%8==0:
