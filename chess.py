@@ -353,7 +353,7 @@ def bestMove(board, player, isMain, prevValue, level):
 				listofmoves.append([ret, piece, move])
 		#check the validity of the moves themselves
 	if level == 4:
-		print listofmoves
+		return listofmoves #change this later
 	return globalmaxmin
 
 def IsPositionUnderThreat(board,position,player):
@@ -462,23 +462,36 @@ def GetPieceLegalMoves(board,position):
 
 def letsPlay(board, player):
 	printBoard(board)
+	if isWhite(player):
+		#use AI
+		l =bestMove(board, 10, True, 1, 4)
+		l.sort()
+		board[l[0][2]] = board[l[0][1]]
+		board[l[0][1]] = 0
+		if player == 10:
+			letsPlay(board, 20)
+		if player == 20:
+			letsPlay(board, 10)
+
+
+	
 	t=raw_input("Enter the coordinates:\n")
 	s = raw_input()
 	t=int(t)
 	s=int(s)
 	#print 8*t+s
-	print board[8*t+s], player
+	#print board[8*t+s], player
 	#print isWhite(board[8*t+s])
 	#print isWhite(player)
 
 	if isWhite(board[8*t+s]) != isWhite(player):
 		letsPlay(board, player)
-
+	print GetPieceLegalMoves(board, 8*t+s)
 	a = raw_input("Enter the final coordinates:\n")
 	b = raw_input()
 	a=int(a)
 	b=int(b)
-	print GetPieceLegalMoves(board, 8*t+s)
+	
 	q = a*8 + b
 	if q in GetPieceLegalMoves(board, 8*t+s):
 		board[q] = board[8*t+s]
@@ -512,8 +525,9 @@ t = [
 #print GetPieceLegalMoves(s,4)
 #printBoard(s)
 # if a move puts you, or keeps you in check you cannot make that move
-#letsPlay(s, 10)
-print GetPieceLegalMoves(t, 11)
-printBoard(t)
-print bestMove(s, 10, True, 1, 4)
+letsPlay(s, 10)
+#printBoard(t)
+
+
+#print bestMove(s, 10, True, 1, 4)
 #all in range(len(board)): can be optimized
