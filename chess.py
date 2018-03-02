@@ -449,18 +449,21 @@ def GetPieceLegalMoves(board,position):
 				k = 8*j
 				pos = position+i+k
 
-				if position/8 != (position+i)/8:
+				if abs(position/8 - (pos)/8) > 1:
 					continue#so that lateral movement doesn't put you on the other side of the board
-				
+				if abs(position%8 - (pos)%8) > 1:
+					continue
+
 				if (j == 0 and i ==0) or not isValid(pos):
 					continue
-				if isWhite(board[pos]) == isWhite(board[position]):
-					continue
-				t= list(board)
-				t[position] =0
-				t[pos] = board[position]
-				if not inCheck(t, board[position]-5):
-					l.append(pos)
+
+				if (isWhite(board[pos]) != isWhite(board[position])) or board[pos] == 0:
+					t= list(board)
+					t[position] =0
+					t[pos] = board[position]
+	
+					if not inCheck(t, board[position]-5):
+						l.append(pos)
 		return l
 	else:
 
@@ -550,20 +553,20 @@ t = [
 	]
 
 v = [
-	13, 11, 12, 15, 14, 12, 11, 13,
-	10, 10, 10,  0, 10, 10, 10, 10,
+	 0,  0,  25,  0,  24,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  14,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0, 0,  0,  0,  0,  0,
 	 0,  0,  0,  0,  0,  0,  0,  0,
 	 0,  0,  0,  0,  0,  0,  0,  0,
-	 0,  0,  0,  0,  0,  0,  0,  0,
-	 0,  0,  0,  0,  0,  0,  0,  0,
-	20, 20, 20, 20, 20, 20, 20, 20,
-	23, 21, 22, 25, 24, 22, 21, 23,
+	 0,  0,  0,  0,  0,  15,  0,  0,
 	]
 #print GetPieceLegalMoves(s,4)
 #printBoard(s)
 # if a move puts you, or keeps you in check you cannot make that move
 #print GetPieceLegalMoves(v, 2)
-letsPlay(s, 10)
+letsPlay(v, 10)
 #printBoard(t)
 
 
