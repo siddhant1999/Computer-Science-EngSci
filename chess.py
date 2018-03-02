@@ -4,6 +4,7 @@
    It should return a list of all positions that the player occupies.'''
 
 #need to implement a alpha beta pruning method of determining successful moves
+
 def printBoard(board):
 	for i in range(len(board)):
 		if i%8==0:
@@ -60,7 +61,7 @@ def printBoard(board):
 def GetPlayerPositions(board,player):
 	l =[]
 	for x in range(len(board)):
-		if isWhite(board[x]) == isWhite(player):
+		if (isWhite(board[x]) == isWhite(player)) and board[x] != 0:
 			l.append(x)
 
 	return l
@@ -84,20 +85,22 @@ def Helper(board, position):
 					l.append(position+7)
 
 			if position+9 < 64:
-				if isWhite(board[position+9]) != isWhite(board[position]) and board[position+7] != 0:
+				if isWhite(board[position+9]) != isWhite(board[position]) and board[position+9] != 0:
 					l.append(position+9)	
 		else:
+			#print "I am a black pawn", position
+			#printBoard(board)
 			if position<=7:
 				return l
 			if board[position-8]==0:
 				l.append(position-8)
 			#capture
 			if position-7 >= 0:
-				if isWhite(board[position-7]) != isWhite(board[position]) and board[position+7] != 0:
+				if isWhite(board[position-7]) != isWhite(board[position]) and board[position-7] != 0:
 					l.append(position-7)
 
 			if position-9 >= 0:
-				if isWhite(board[position-9]) != isWhite(board[position]) and board[position+7] != 0:
+				if isWhite(board[position-9]) != isWhite(board[position]) and board[position-9] != 0:
 					l.append(position-9)
 
 	if p == 3 or p == 4:
@@ -323,6 +326,13 @@ def bestMove(board, player, isMain, prevValue, level):
 	else:
 		globalmaxmin = -1000000
 
+	#print a
+	'''for i in a:
+		print i
+		print GetPieceLegalMoves(board, i)
+	return 1
+	'''
+	listofmoves = []
 	for piece in a:
 		allmoves = GetPieceLegalMoves(board, piece)
 		for move in allmoves:
@@ -339,7 +349,11 @@ def bestMove(board, player, isMain, prevValue, level):
 				globalmaxmin = min(globalmaxmin, ret)
 			else:
 				globalmaxmin = max(globalmaxmin, ret)
+			if level == 4:
+				listofmoves.append([ret, piece, move])
 		#check the validity of the moves themselves
+	if level == 4:
+		print listofmoves
 	return globalmaxmin
 
 def IsPositionUnderThreat(board,position,player):
@@ -403,6 +417,9 @@ def isValid(num):
 
 
 def GetPieceLegalMoves(board,position):
+	'''if board[position] < 10 or board[position] > 25:
+		print "ERROR", board[position], position'''
+
 	l=[]
 	if board[position]%10 == 5:
 		#make sure to check if this king move puts the king in danger
@@ -427,17 +444,18 @@ def GetPieceLegalMoves(board,position):
 	else:
 
 		l = Helper(board, position)
-		print l
+		#print l
 	#check if by setting the value of board[position] to 0 and then set board[l[i]] to board[position] and check if in check
 	#return l
 
+	#issue is here
 	actual_l = []
 	for i in range(len(l)):
 		t= list(board)
 		t[position] =0
 		t[l[i]]=board[position]
 
-		if(not inCheck(t, (position/10)*10)):
+		if(not inCheck(t, (board[position]/10)*10)):
 			actual_l.append(l[i])
 	return actual_l
 
@@ -497,5 +515,5 @@ t = [
 #letsPlay(s, 10)
 print GetPieceLegalMoves(t, 11)
 printBoard(t)
-
+print bestMove(s, 10, True, 1, 4)
 #all in range(len(board)): can be optimized
