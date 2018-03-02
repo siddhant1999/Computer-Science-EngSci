@@ -65,14 +65,6 @@ def GetPlayerPositions(board,player):
 
 	return l
 
-'''Write the function GetPieceLegalMoves(board,position)
-   which will return a list of all legal positions that the piece in
-   the given position can take.'''
-'''
-Write the function IsPositionUnderThreat(board,position,player)
-   which will return True if the position is under threat by the opponent
-   of the given player
-   '''
 
 def Helper(board, position):
 	p = board[position]%10 #this is the piece
@@ -285,14 +277,77 @@ def GetHit(board, position, target):
 		return True
 	return False
 
+lookup = [None]*30
+lookup[0] = 0
+lookup[10] = 10
+lookup[20] = -10
+lookup[11] = 30
+lookup[21] = -30
+lookup[12] = 30
+lookup[22] = -30
+lookup[13] = 50
+lookup[23] = -50
+lookup[14] = 90
+lookup[24] = -90
+lookup[15] = 900
+lookup[25] = -900
 
+'''
+Pawn:   +0
+Knight: +1
+Bishop: +2
+Rook:   +3
+Queen:  +4
+King:   +5
+'''
+
+def boardValue(board):
+	s = 0
+	for i in board:
+		s+= lookup[i]
+	return s
+
+def bestMove(board, player, isMain, prevValue, level):
+	if level == 0:
+		return boardValue(board)
+	#idk yet if we even need player
+	#start with a simple 2 level implementation
+	#if the level is divisible by 2 return min
+
+	#check all possible moves and check to see if a piece is being captured
+
+	a = GetPlayerPositions(board, player)
+
+	if level%2:
+		globalmaxmin = 1000000
+	else:
+		globalmaxmin = -1000000
+
+	for piece in a:
+		allmoves = GetPieceLegalMoves(board, piece)
+		for move in allmoves:
+			#piece is the position the piece was in, move is where it wants to go
+			#boardVal = prevValue - lookup[board[move]] #you may only need to evaluate this at the end
+			t = list(board)
+			t[move] = board[piece]
+			t[piece] = 0
+			if isWhite(player):
+				ret = bestMove(t, 20, isMain, prevValue, level-1)
+			else:
+				ret = bestMove(t, 10, isMain, prevValue, level-1)
+			if level%2:
+				globalmaxmin = min(globalmaxmin, ret)
+			else:
+				globalmaxmin = max(globalmaxmin, ret)
+		#check the validity of the moves themselves
+	return globalmaxmin
 
 def IsPositionUnderThreat(board,position,player):
-	for i in range(len(board)):
-		if isWhite(board[i]) != isWhite(position):
-			l =GetPieceLegalMoves(board, i)
-			if position in l:
-				return True
+	play = GetPlayerPositions(board, player)
+	for i in play:
+		l =GetPieceLegalMoves(board, i)
+		if position in l:
+			return True
 	return False
 
 
@@ -302,6 +357,7 @@ def inCheck(board, colour):
 
 	king = colour+5
 
+	#can speed this up by not having to itterate over the entire board state
 	for i in range(len(board)):
 		if board[i] == king:
 			pos = i
@@ -441,3 +497,5 @@ t = [
 #letsPlay(s, 10)
 print GetPieceLegalMoves(t, 11)
 printBoard(t)
+
+#all in range(len(board)): can be optimized
