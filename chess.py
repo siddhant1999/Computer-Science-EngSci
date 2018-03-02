@@ -321,7 +321,7 @@ def bestMove(board, player, isMain, prevValue, level):
 
 	a = GetPlayerPositions(board, player)
 
-	if level%2:
+	if level%2==1:
 		globalmaxmin = 1000000
 	else:
 		globalmaxmin = -1000000
@@ -345,7 +345,7 @@ def bestMove(board, player, isMain, prevValue, level):
 				ret = bestMove(t, 20, isMain, prevValue, level-1)
 			else:
 				ret = bestMove(t, 10, isMain, prevValue, level-1)
-			if level%2:
+			if level%2==1:
 				globalmaxmin = min(globalmaxmin, ret)
 			else:
 				globalmaxmin = max(globalmaxmin, ret)
@@ -465,7 +465,7 @@ def letsPlay(board, player):
 	if isWhite(player):
 		#use AI
 		l =bestMove(board, 10, True, 1, 4)
-		l.sort()
+		l.sort(reverse=True)
 		board[l[0][2]] = board[l[0][1]]
 		board[l[0][1]] = 0
 		if player == 10:
@@ -514,18 +514,18 @@ s = [
 
 t = [
 	13, 11, 12, 15, 14, 12, 11, 13,
-	10, 10, 10, 12, 10, 10, 10, 10,
+	10, 10, 10, 10, 10, 10, 10, 24,
 	 0,  0,  0,  0,  0,  0,  0,  0,
 	 0,  0,  0,  0,  0,  0,  0,  0,
 	 0,  0,  0,  0,  0,  0,  0,  0,
 	 0,  0,  0,  0,  0,  0,  0,  0,
-	20, 20, 20,  0, 20, 20, 20, 20,
-	23, 21, 22, 24, 25, 22, 21, 23,
+	20, 20, 20, 20, 20, 20, 20, 20,
+	23, 21, 22, 0, 25, 22, 21, 23,
 	]
 #print GetPieceLegalMoves(s,4)
 #printBoard(s)
 # if a move puts you, or keeps you in check you cannot make that move
-letsPlay(s, 10)
+letsPlay(t, 10)
 #printBoard(t)
 
 
