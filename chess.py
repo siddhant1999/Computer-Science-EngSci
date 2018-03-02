@@ -66,6 +66,10 @@ def GetPlayerPositions(board,player):
 
 	return l
 
+def HorseValid(a, b):
+	if abs(a/8 - b/8)>2 or abs(a%8-b%8)>2:
+		return False
+	return True
 
 def Helper(board, position):
 	p = board[position]%10 #this is the piece
@@ -174,35 +178,43 @@ def Helper(board, position):
 		#top left
 		if isValid(position-17):
 			if board[position-17] == 0 or (isWhite(board[position]) != isWhite(board[position-17])):
-				l.append(position-17)
+				if HorseValid(position, position-17):
+					l.append(position-17)
 		#left top
 		if isValid(position-10):
 			if board[position-10] == 0 or (isWhite(board[position]) != isWhite(board[position-10])):
-				l.append(position-10)
+				if HorseValid(position, position-10):
+					l.append(position-10)
 		#left bottom
 		if isValid(position+6):
 			if board[position+6] == 0 or (isWhite(board[position]) != isWhite(board[position+6])):
-				l.append(position+6)
+				if HorseValid(position, position+6):
+					l.append(position+6)
 		#bottom left
 		if isValid(position+15):
 			if board[position+15] == 0 or (isWhite(board[position]) != isWhite(board[position+15])):
-				l.append(position+15)
+				if HorseValid(position, position+15):
+					l.append(position+15)
 		#bottom right
 		if isValid(position+17):
 			if board[position+17] == 0 or (isWhite(board[position]) != isWhite(board[position+17])):
-				l.append(position+17)
+				if HorseValid(position, position+17):
+					l.append(position+17)
 		#right bottom
 		if isValid(position+10):
 			if board[position+10] == 0 or (isWhite(board[position]) != isWhite(board[position+10])):
-				l.append(position+10)
+				if HorseValid(position, position+10):
+					l.append(position+10)
 		#right top
 		if isValid(position-6):
 			if board[position-6] == 0 or (isWhite(board[position]) != isWhite(board[position-6])):
-				l.append(position-6)
+				if HorseValid(position, position-6):
+					l.append(position-6)
 		#top right
 		if isValid(position-15):
 			if board[position-15] == 0 or (isWhite(board[position]) != isWhite(board[position-15])):
-				l.append(position-15)
+				if HorseValid(position, position-15):
+					l.append(position-15)
 		return l
 		
 	if p==2 or p==4:
@@ -525,7 +537,7 @@ t = [
 #print GetPieceLegalMoves(s,4)
 #printBoard(s)
 # if a move puts you, or keeps you in check you cannot make that move
-letsPlay(t, 10)
+letsPlay(s, 10)
 #printBoard(t)
 
 
