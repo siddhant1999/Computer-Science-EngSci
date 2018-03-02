@@ -1,36 +1,14 @@
-'''
-Pawn:   +0
-Knight: +1
-Bishop: +2
-Rook:   +3
-Queen:  +4
-King:   +5
-'''
-import random
-import time
+'''Write the function GetPlayerPositions(board,player)
+   where board is the list data struct that represents the chess board
+   (described above) and player is 10 (for white) and 20 (for black).
+   It should return a list of all positions that the player occupies.'''
 
-
-# run your code
-
-lookup = [None]*30
-lookup[0] = 0
-lookup[10] = 10
-lookup[20] = -10
-lookup[11] = 30
-lookup[21] = -30
-lookup[12] = 30
-lookup[22] = -30
-lookup[13] = 50
-lookup[23] = -50
-lookup[14] = 90
-lookup[24] = -90
-lookup[15] = 900
-lookup[25] = -900
-
+#need to implement a alpha beta pruning method of determining successful moves
 
 def printBoard(board):
-	for i in range(len(board)-1, -1, -1):
-		
+	for i in range(len(board)):
+		if i%8==0:
+			print "\n"
 		if board[i] == 0:
 			if (i/8)%2:
 				if i%2:
@@ -78,8 +56,6 @@ def printBoard(board):
 				print "K",
 			else:
 				print "k",
-		if i%8==0:
-			print "\n"
 	print "\n"
 
 def GetPlayerPositions(board,player):
@@ -325,7 +301,29 @@ def GetHit(board, position, target):
 		return True
 	return False
 
+lookup = [None]*30
+lookup[0] = 0
+lookup[10] = 10
+lookup[20] = -10
+lookup[11] = 30
+lookup[21] = -30
+lookup[12] = 30
+lookup[22] = -30
+lookup[13] = 50
+lookup[23] = -50
+lookup[14] = 90
+lookup[24] = -90
+lookup[15] = 900
+lookup[25] = -900
 
+'''
+Pawn:   +0
+Knight: +1
+Bishop: +2
+Rook:   +3
+Queen:  +4
+King:   +5
+'''
 
 def boardValue(board):
 	s = 0
@@ -333,9 +331,9 @@ def boardValue(board):
 		s+= lookup[i]
 	return s
 
-def bestMove(board, player, isMain, start, level):
+def bestMove(board, player, isMain, prevValue, level):
 	if level == 0:
-		return isMain * boardValue(board)
+		return  boardValue(board)
 	#idk yet if we even need player
 	#start with a simple 2 level implementation
 	#if the level is divisible by 2 return min
@@ -359,20 +357,16 @@ def bestMove(board, player, isMain, start, level):
 	for piece in a:
 		allmoves = GetPieceLegalMoves(board, piece)
 		for move in allmoves:
-			end = time.time()
-
-			elapsed = end - start
-			if elapsed > 9.7 and level != 4:
-				return globalmaxmin
 			#piece is the position the piece was in, move is where it wants to go
 			#boardVal = prevValue - lookup[board[move]] #you may only need to evaluate this at the end
 			t = list(board)
 			t[move] = board[piece]
 			t[piece] = 0
 			if isWhite(player):
-				ret = bestMove(t, 20, isMain, start, level-1)
+				ret = bestMove(t, 20, isMain, prevValue, level-1)
 			else:
-				ret = bestMove(t, 10, isMain, start, level-1)
+				ret = bestMove(t, 10, isMain, prevValue, level-1)
+			prevglobal = globalmaxmin
 			if level%2==1:
 				globalmaxmin = min(globalmaxmin, ret)
 			else:
@@ -406,14 +400,11 @@ def inCheck(board, colour):
 			break
 	#print pos
 	#pos is the position of my king
-	if isWhite(king):
-		abc =GetPlayerPositions(board, 20)
-	else:
-		abc =GetPlayerPositions(board, 10)
-	for i in abc:
-		if GetHit(board, i, pos):
-			return True
-		#meaning if the king is here it will be taken
+	for i in range(len(board)):
+		if isWhite(board[i]) != isWhite(board[pos]):
+			if GetHit(board, i, pos):
+				return True
+				#meaning if the king is here it will be taken
 
 	
 	for i in range(len(board)):
@@ -479,7 +470,6 @@ def GetPieceLegalMoves(board,position):
 
 		l = Helper(board, position)
 		#print l
-		#print l
 	#check if by setting the value of board[position] to 0 and then set board[l[i]] to board[position] and check if in check
 	#return l
 
@@ -489,8 +479,7 @@ def GetPieceLegalMoves(board,position):
 		t= list(board)
 		t[position] =0
 		t[l[i]]=board[position]
-		#printBoard(t)
-		#print (board[position]/10)*10
+
 		if(not inCheck(t, (board[position]/10)*10)):
 			actual_l.append(l[i])
 	return actual_l
@@ -500,15 +489,17 @@ def letsPlay(board, player):
 	printBoard(board)
 	if isWhite(player):
 		#use AI
-		l =bestMove(board, 10, True, 1, 4) #depends on who you are playing as
-		#l =bestMove(board, 20, True, -1, 4) for black
+		l =bestMove(board, 10, True, 1, 4)
 		l.sort(reverse=True)
 		board[l[0][2]] = board[l[0][1]]
 		board[l[0][1]] = 0
+		print l[0]
 		if player == 10:
 			letsPlay(board, 20)
 		if player == 20:
 			letsPlay(board, 10)
+
+
 	
 	t=raw_input("Enter the coordinates:\n")
 	s = raw_input()
@@ -541,37 +532,6 @@ def letsPlay(board, player):
 		if player == 20:
 			letsPlay(board, 10)
 
-# * name: chessPlayer
-# * return values: the 4-list [ status, move, candidateMoves, evalTree]
-# * arguments: board, player
-
-def chessPlayer(board, player):
-	start = time.time()
-	if player != 10 and player != 20:
-		return [False, [], [], None]
-	#this is sorta like a lets play
-
-	if isWhite(player):
-		l =bestMove(board, 10, 1, start, 4)
-	else:
-		l =bestMove(board, 20, -1, start, 4)
-	
-	if len(l) <1:
-		return [False, [], [], None]
-	l.sort(reverse=True)
-	#to optimize dont return the whole list
-	#print l[0]#to
-
-	#generate candidate
-	cand = []
-	for i in l:
-		y = [i[1:], round(random.uniform(0, 0.8), 2)]
-		cand.append(y)
-	cand[0][1]=round(random.uniform(0.8, 1), 2)
-	#print cand
-	#print len(cand)
-	evaltree = [(round(random.uniform(0, 1), 2)) for k in range(len(cand))]
-	return [True, l[0][1:], cand, evaltree]
 s = [
 	13, 11, 12, 15, 14, 12, 11, 13,
 	10, 10, 10, 10, 10, 10, 10, 10,
@@ -584,14 +544,14 @@ s = [
 	]
 
 t = [
-	13, 11, 12, 15, 14, 12, 11, 13,
-	10, 10, 10, 10, 10, 10, 10, 0,
+	13, 0, 12, 15, 14, 12, 11, 13,
+	10, 10, 10, 10, 10, 10, 10, 10,
+	 11,  0,  0,  0,  0,  0,  0,  0,
 	 0,  0,  0,  0,  0,  0,  0,  0,
 	 0,  0,  0,  0,  0,  0,  0,  0,
-	 0,  0,  0,  0,  0,  0,  0,  0,
-	 0,  0,  0,   0,  0,  0,  0,  0,
-	20, 20, 20,  20, 20, 20, 14,  20,
-	23, 21, 22, 23, 25, 22, 21, 23,
+	 0,  20,  0,  0,  0,  0,  0,  0,
+	20, 0, 20, 20, 20, 20, 20, 20,
+	23, 21, 22, 25, 24, 22, 21, 23,
 	]
 
 v = [
@@ -607,9 +567,8 @@ v = [
 #print GetPieceLegalMoves(s,4)
 #printBoard(s)
 # if a move puts you, or keeps you in check you cannot make that move
-#print GetPieceLegalMoves(s, 12)
-#letsPlay(t, 20)
-print chessPlayer(t, 10)
+#print GetPieceLegalMoves(v, 2)
+letsPlay(t, 10)
 #printBoard(t)
 
 
