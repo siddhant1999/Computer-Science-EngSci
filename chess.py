@@ -12,21 +12,20 @@ import time
 
 # run your code
 
-lookup = [None]*30
-lookup[0] = 0
-lookup[10] = 10
-lookup[20] = -10
-lookup[11] = 30
-lookup[21] = -30
-lookup[12] = 30
-lookup[22] = -30
-lookup[13] = 50
-lookup[23] = -50
-lookup[14] = 90
-lookup[24] = -90
-lookup[15] = 900
-lookup[25] = -900
+def isWhite(n):
+	if n >= 10 and n < 20:
+		return True
+	return False
 
+def isValid(num):
+	if num>= 0 and num<64:
+		return True
+	return False
+
+def HorseValid(a, b):
+	if abs(a/8 - b/8)>2 or abs(a%8-b%8)>2:
+		return False
+	return True
 
 def printBoard(board):
 	for i in range(len(board)-1, -1, -1):
@@ -82,6 +81,57 @@ def printBoard(board):
 			print "\n"
 	print "\n"
 
+def IsPositionUnderThreat(board,position,player):
+	play = GetPlayerPositions(board, player)
+	for i in play:
+		l =GetPieceLegalMoves(board, i)
+		if position in l:
+			return True
+	return False
+
+def inCheck(board, colour):
+	#let's us first check if white king is in danger
+	#first determine where the white king is
+
+	king = colour+5
+
+	#can speed this up by not having to itterate over the entire board state
+	for i in range(len(board)):
+		if board[i] == king:
+			pos = i
+			break
+	#print pos
+	#pos is the position of my king
+	if isWhite(king):
+		abc =GetPlayerPositions(board, 20)
+	else:
+		abc =GetPlayerPositions(board, 10)
+	for i in abc:
+		if GetHit(board, i, pos):
+			return True
+		#meaning if the king is here it will be taken
+
+	
+	for i in range(len(board)):
+		if isWhite(board[i]) == isWhite(king):
+			continue
+		if board[i]%10 == 5:
+			#found the other king
+			for z in range(-1, 2):
+				for q in range(-1, 2):
+					k = 8*q
+					possi = i+z+q
+					if i/8 != (i+z)/8:
+						continue#so that lateral movement doesn't put you on the other side of the board
+					
+					if (q == 0 and z ==0) or not isValid(possi):
+						continue
+					if possi == pos:
+						return True
+					#thus the other king
+					#check if in my minesweeper
+	return False
+
 def GetPlayerPositions(board,player):
 	l =[]
 	for x in range(len(board)):
@@ -90,12 +140,8 @@ def GetPlayerPositions(board,player):
 
 	return l
 
-def HorseValid(a, b):
-	if abs(a/8 - b/8)>2 or abs(a%8-b%8)>2:
-		return False
-	return True
-
 def Helper(board, position):
+	print flipped
 	p = board[position]%10 #this is the piece
 	l=[]
 	if p == 0:
@@ -325,128 +371,6 @@ def GetHit(board, position, target):
 		return True
 	return False
 
-
-
-def boardValue(board):
-	s = 0
-	for i in board:
-		s+= lookup[i]
-	return s
-
-def bestMove(board, player, isMain, start, level):
-	if level == 0:
-		return isMain * boardValue(board)
-	#idk yet if we even need player
-	#start with a simple 2 level implementation
-	#if the level is divisible by 2 return min
-
-	#check all possible moves and check to see if a piece is being captured
-
-	a = GetPlayerPositions(board, player)
-
-	if level%2==1:
-		globalmaxmin = 1000000
-	else:
-		globalmaxmin = -1000000
-
-	#print a
-	'''for i in a:
-		print i
-		print GetPieceLegalMoves(board, i)
-	return 1
-	'''
-	listofmoves = []
-	for piece in a:
-		allmoves = GetPieceLegalMoves(board, piece)
-		for move in allmoves:
-			end = time.time()
-
-			elapsed = end - start
-			if elapsed > 9.7 and level != 4:
-				return globalmaxmin
-			#piece is the position the piece was in, move is where it wants to go
-			#boardVal = prevValue - lookup[board[move]] #you may only need to evaluate this at the end
-			t = list(board)
-			t[move] = board[piece]
-			t[piece] = 0
-			if isWhite(player):
-				ret = bestMove(t, 20, isMain, start, level-1)
-			else:
-				ret = bestMove(t, 10, isMain, start, level-1)
-			if level%2==1:
-				globalmaxmin = min(globalmaxmin, ret)
-			else:
-				globalmaxmin = max(globalmaxmin, ret)
-			if level == 4:
-				listofmoves.append([ret, piece, move])
-		#check the validity of the moves themselves
-	if level == 4:
-		return listofmoves #change this later
-	return globalmaxmin
-
-def IsPositionUnderThreat(board,position,player):
-	play = GetPlayerPositions(board, player)
-	for i in play:
-		l =GetPieceLegalMoves(board, i)
-		if position in l:
-			return True
-	return False
-
-
-def inCheck(board, colour):
-	#let's us first check if white king is in danger
-	#first determine where the white king is
-
-	king = colour+5
-
-	#can speed this up by not having to itterate over the entire board state
-	for i in range(len(board)):
-		if board[i] == king:
-			pos = i
-			break
-	#print pos
-	#pos is the position of my king
-	if isWhite(king):
-		abc =GetPlayerPositions(board, 20)
-	else:
-		abc =GetPlayerPositions(board, 10)
-	for i in abc:
-		if GetHit(board, i, pos):
-			return True
-		#meaning if the king is here it will be taken
-
-	
-	for i in range(len(board)):
-		if isWhite(board[i]) == isWhite(king):
-			continue
-		if board[i]%10 == 5:
-			#found the other king
-			for z in range(-1, 2):
-				for q in range(-1, 2):
-					k = 8*q
-					possi = i+z+q
-					if i/8 != (i+z)/8:
-						continue#so that lateral movement doesn't put you on the other side of the board
-					
-					if (q == 0 and z ==0) or not isValid(possi):
-						continue
-					if possi == pos:
-						return True
-					#thus the other king
-					#check if in my minesweeper
-	return False
-
-def isWhite(n):
-	if n >= 10 and n < 20:
-		return True
-	return False
-
-def isValid(num):
-	if num>= 0 and num<64:
-		return True
-	return False
-
-
 def GetPieceLegalMoves(board,position):
 	'''if board[position] < 10 or board[position] > 25:
 		print "ERROR", board[position], position'''
@@ -495,6 +419,81 @@ def GetPieceLegalMoves(board,position):
 			actual_l.append(l[i])
 	return actual_l
 
+def boardValue(board, flipped):
+	lookup = [None]*30
+	lookup[0] = 0
+	lookup[10] = 10
+	lookup[20] = -10
+	lookup[11] = 30
+	lookup[21] = -30
+	lookup[12] = 30
+	lookup[22] = -30
+	lookup[13] = 50
+	lookup[23] = -50
+	lookup[14] = 90
+	lookup[24] = -90
+	lookup[15] = 900
+	lookup[25] = -900
+
+
+	s = 0
+	for i in board:
+		if flipped:
+			s-= lookup[i]
+		else:
+			s+= lookup[i]
+	return s
+
+def bestMove(board, player, flipped, start, level):
+	if level == 0:
+		return boardValue(board, flipped)
+	#idk yet if we even need player
+	#start with a simple 2 level implementation
+	#if the level is divisible by 2 return min
+
+	#check all possible moves and check to see if a piece is being captured
+
+	a = GetPlayerPositions(board, player)
+
+	if level%2==1:
+		globalmaxmin = 1000000
+	else:
+		globalmaxmin = -1000000
+
+	#print a
+	'''for i in a:
+		print i
+		print GetPieceLegalMoves(board, i)
+	return 1
+	'''
+	listofmoves = []
+	for piece in a:
+		allmoves = GetPieceLegalMoves(board, piece)
+		for move in allmoves:
+			end = time.time()
+
+			elapsed = end - start
+			if elapsed > 9.7 and level != 4:
+				return globalmaxmin
+			#piece is the position the piece was in, move is where it wants to go
+			#boardVal = prevValue - lookup[board[move]] #you may only need to evaluate this at the end
+			t = list(board)
+			t[move] = board[piece]
+			t[piece] = 0
+			if isWhite(player):
+				ret = bestMove(t, 20, flipped, start, level-1)
+			else:
+				ret = bestMove(t, 10, flipped, start, level-1)
+			if level%2==1:
+				globalmaxmin = min(globalmaxmin, ret)
+			else:
+				globalmaxmin = max(globalmaxmin, ret)
+			if level == 4:
+				listofmoves.append([ret, piece, move])
+		#check the validity of the moves themselves
+	if level == 4:
+		return listofmoves #change this later
+	return globalmaxmin
 
 def letsPlay(board, player):
 	printBoard(board)
@@ -551,10 +550,11 @@ def chessPlayer(board, player):
 		return [False, [], [], None]
 	#this is sorta like a lets play
 
-	if isWhite(player):
-		l =bestMove(board, 10, 1, start, 4)
+	if not isWhite(player):
+		l =bestMove(board, 10, True, start, 4)
 	else:
-		l =bestMove(board, 20, -1, start, 4)
+		l =bestMove(board, 10, False, start, 4)
+	
 	
 	if len(l) <1:
 		return [False, [], [], None]
@@ -569,7 +569,7 @@ def chessPlayer(board, player):
 		cand.append(y)
 	cand[0][1]=round(random.uniform(0.8, 1), 2)
 	#print cand
-	#print len(cand)
+	print len(cand)
 	evaltree = [(round(random.uniform(0, 1), 2)) for k in range(len(cand))]
 	return [True, l[0][1:], cand, evaltree]
 s = [
@@ -609,7 +609,7 @@ v = [
 # if a move puts you, or keeps you in check you cannot make that move
 #print GetPieceLegalMoves(s, 12)
 #letsPlay(t, 20)
-print chessPlayer(t, 10)
+print chessPlayer(t, 20)
 #printBoard(t)
 
 
