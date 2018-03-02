@@ -223,6 +223,8 @@ def Helper(board, position):
 		row=position/8
 		while(isValid(pos)):
 			#right down
+			if abs((pos-9)/8 - pos/8)>1 or abs((pos-9)%8-pos%8)>1:
+				break
 
 			if board[pos] == 0:
 				l.append(pos)
@@ -238,6 +240,8 @@ def Helper(board, position):
 
 		pos = position-9
 		while(isValid(pos)):
+			if abs((pos+9)/8 - pos/8)>1 or abs((pos+9)%8-pos%8)>1:
+				break
 			#left up
 			if board[pos] == 0:
 				l.append(pos)
@@ -254,6 +258,9 @@ def Helper(board, position):
 		pos = position+7
 		while(isValid(pos)):
 			#left down
+			if abs((pos-7)/8 - pos/8)>1 or abs((pos-7)%8-pos%8)>1:
+				break
+
 			if board[pos] == 0:
 				l.append(pos)
 				pos+=7
@@ -269,6 +276,8 @@ def Helper(board, position):
 		pos = position-7
 		while(isValid(pos)):
 			#down
+			if abs((pos+7)/8 - pos/8)>1 or abs((pos+7)%8-pos%8)>1:
+				break
 			if board[pos] == 0:
 				l.append(pos)
 				pos-=7
@@ -491,13 +500,18 @@ def letsPlay(board, player):
 	s = raw_input()
 	t=int(t)
 	s=int(s)
+	while(board[8*t+s] == 0):
+		t=raw_input("Enter the coordinates:\n")
+		s = raw_input()
+		t=int(t)
+		s=int(s)
 	#print 8*t+s
 	#print board[8*t+s], player
 	#print isWhite(board[8*t+s])
 	#print isWhite(player)
 
-	if isWhite(board[8*t+s]) != isWhite(player):
-		letsPlay(board, player)
+	#if isWhite(board[8*t+s]) != isWhite(player):
+		#letsPlay(board, player)
 	print GetPieceLegalMoves(board, 8*t+s)
 	a = raw_input("Enter the final coordinates:\n")
 	b = raw_input()
@@ -514,14 +528,14 @@ def letsPlay(board, player):
 			letsPlay(board, 10)
 
 s = [
-	13, 11, 12, 14, 15, 12, 11, 13,
+	13, 11, 12, 15, 14, 12, 11, 13,
 	10, 10, 10, 10, 10, 10, 10, 10,
 	 0,  0,  0,  0,  0,  0,  0,  0,
 	 0,  0,  0,  0,  0,  0,  0,  0,
 	 0,  0,  0,  0,  0,  0,  0,  0,
 	 0,  0,  0,  0,  0,  0,  0,  0,
 	20, 20, 20, 20, 20, 20, 20, 20,
-	23, 21, 22, 24, 25, 22, 21, 23,
+	23, 21, 22, 25, 24, 22, 21, 23,
 	]
 
 t = [
@@ -534,9 +548,21 @@ t = [
 	20, 20, 20, 20, 20, 20, 20, 20,
 	23, 21, 22, 0, 25, 22, 21, 23,
 	]
+
+v = [
+	13, 11, 12, 15, 14, 12, 11, 13,
+	10, 10, 10,  0, 10, 10, 10, 10,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	20, 20, 20, 20, 20, 20, 20, 20,
+	23, 21, 22, 25, 24, 22, 21, 23,
+	]
 #print GetPieceLegalMoves(s,4)
 #printBoard(s)
 # if a move puts you, or keeps you in check you cannot make that move
+#print GetPieceLegalMoves(v, 2)
 letsPlay(s, 10)
 #printBoard(t)
 
