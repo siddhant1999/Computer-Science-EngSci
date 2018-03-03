@@ -441,9 +441,11 @@ def boardValue(board):
 			s+= lookup[i]
 	return s
 
-def bestMove(board, player, flipped, start, level):
+def bestMove(board, player, flipped, start, level, alpha, beta):
+
 	if level == 0:
 		return boardValue(board)
+	#print alpha, beta, level, player
 	#idk yet if we even need player
 	#start with a simple 2 level implementation
 	#if the level is divisible by 2 return min
@@ -463,8 +465,13 @@ def bestMove(board, player, flipped, start, level):
 		print GetPieceLegalMoves(board, i)
 	return 1
 	'''
+	alphapre = alpha
+	betapre = beta
+	ppp=0
 	listofmoves = []
 	for piece in a:
+		alpha = alphapre
+		beta = betapre
 		allmoves = GetPieceLegalMoves(board, piece)
 		for move in allmoves:
 			end = time.time()
@@ -478,16 +485,22 @@ def bestMove(board, player, flipped, start, level):
 			t[move] = board[piece]
 			t[piece] = 0
 			if isWhite(player):
-				ret = bestMove(t, 20, flipped, start, level-1)
+				ret = bestMove(t, 20, flipped, start, level-1, alpha, beta)
 				globalmaxmin = max(globalmaxmin, ret)
+				alpha=max(globalmaxmin, alpha)
+				if beta<=alpha:
+					break
 			else:
-				ret = bestMove(t, 10, flipped, start, level-1)
+				ret = bestMove(t, 10, flipped, start, level-1, alpha, beta)
 				globalmaxmin = min(globalmaxmin, ret)
+				beta=min(globalmaxmin, beta)
+				if beta<=alpha:
+					break
 			
-			if level == 5:
+			if level == 4:
 				listofmoves.append([ret, piece, move])
 
-	if level == 5:
+	if level == 4:
 		return listofmoves #change this later
 	return globalmaxmin
 
@@ -547,10 +560,10 @@ def chessPlayer(board, player):
 	#this is sorta like a lets play
 
 	if isWhite(player):
-		l =bestMove(board, 10, True, start, 5)
+		l =bestMove(board, 10, True, start, 4, -1000000, 1000000)
 		l.sort(reverse=True)
 	else:
-		l =bestMove(board, 20, False, start, 5)
+		l =bestMove(board, 20, False, start, 4, -1000000, 1000000)
 		l.sort()
 	
 	
@@ -612,16 +625,17 @@ v = [
 #letsPlay(t, 20)
 
 # lets try playing 10 rounds
-for i in range(20):
+for i in range(10):
 	printBoard(s)
 	if i%2:
-		print "BLACK"
+		print "BLACK", i
 		l =chessPlayer(s, 20)
 	else:
-		print "WHITE"
+		print "WHITE", i
 		l = chessPlayer(s, 10)
 
 	print l[1]
+	print " "
 	s[l[1][1]] = s[l[1][0]]
 	s[l[1][0]] = 0
 
