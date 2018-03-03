@@ -442,7 +442,6 @@ def boardValue(board):
 	return s
 
 def bestMove(board, player, flipped, start, level, alpha, beta):
-
 	if level == 0:
 		return boardValue(board)
 	#print alpha, beta, level, player
@@ -459,31 +458,26 @@ def bestMove(board, player, flipped, start, level, alpha, beta):
 	else:
 		globalmaxmin = 1000000
 
-	#print a
-	'''for i in a:
-		print i
-		print GetPieceLegalMoves(board, i)
-	return 1
-	'''
 	alphapre = alpha
 	betapre = beta
-	ppp=0
 	listofmoves = []
+
 	for piece in a:
 		alpha = alphapre
 		beta = betapre
 		allmoves = GetPieceLegalMoves(board, piece)
+
 		for move in allmoves:
 			end = time.time()
 
 			elapsed = end - start
-			#if elapsed > 9.7 and level != 4:
-				#return globalmaxmin
+			if elapsed > 9.7 and level != 3:
+				return globalmaxmin
 			#piece is the position the piece was in, move is where it wants to go
-			#boardVal = prevValue - lookup[board[move]] #you may only need to evaluate this at the end
 			t = list(board)
 			t[move] = board[piece]
 			t[piece] = 0
+
 			if isWhite(player):
 				ret = bestMove(t, 20, flipped, start, level-1, alpha, beta)
 				globalmaxmin = max(globalmaxmin, ret)
@@ -497,14 +491,14 @@ def bestMove(board, player, flipped, start, level, alpha, beta):
 				if beta<=alpha:
 					break
 			
-			if level == 4:
+			if level == 3:
 				listofmoves.append([ret, piece, move])
 
-	if level == 4:
+	if level == 3:
 		return listofmoves #change this later
 	return globalmaxmin
 
-def letsPlay(board, player):
+'''def letsPlay(board, player):
 	printBoard(board)
 	if isWhite(player):
 		#use AI
@@ -548,7 +542,7 @@ def letsPlay(board, player):
 			letsPlay(board, 20)
 		if player == 20:
 			letsPlay(board, 10)
-
+'''
 # * name: chessPlayer
 # * return values: the 4-list [ status, move, candidateMoves, evalTree]
 # * arguments: board, player
@@ -560,10 +554,10 @@ def chessPlayer(board, player):
 	#this is sorta like a lets play
 
 	if isWhite(player):
-		l =bestMove(board, 10, True, start, 4, -1000000, 1000000)
+		l =bestMove(board, 10, True, start, 3, -1000000, 1000000)
 		l.sort(reverse=True)
 	else:
-		l =bestMove(board, 20, False, start, 4, -1000000, 1000000)
+		l =bestMove(board, 20, False, start, 3, -1000000, 1000000)
 		l.sort()
 	
 	
@@ -582,10 +576,11 @@ def chessPlayer(board, player):
 	cand[0][1]=round(random.uniform(0.8, 1), 2)
 	#print cand
 	#print len(cand)
-	print "best", l[0][0]
-	print time.time() - start
+	#print "best", l[0][0]
+	#print time.time() - start
 	evaltree = [(round(random.uniform(0, 1), 2)) for k in range(len(cand))]
 	return [True, l[0][1:], cand, evaltree]
+'''
 t = [
 	13, 11, 12, 15, 14, 12, 11, 13,
 	10, 10, 10, 10, 10, 10, 10, 10,
@@ -596,7 +591,7 @@ t = [
 	20, 20, 20, 20, 20, 20, 20, 20,
 	23, 21, 22, 25, 24, 22, 21, 23,
 	]
-
+'''
 s = [
 	13, 11, 12, 15, 14, 12, 11, 13,
 	10, 10, 10, 10, 10, 10, 10, 0,
@@ -618,28 +613,29 @@ v = [
 	 0,  0,  0,  0,  0,  0,  0,  0,
 	 0,  0,  0,  0,  0,  15,  0,  0,
 	]
+
 #print GetPieceLegalMoves(s,4)
 #printBoard(s)
 # if a move puts you, or keeps you in check you cannot make that move
 #print GetPieceLegalMoves(s, 12)
 #letsPlay(t, 20)
-
+print chessPlayer(s, 20)
 # lets try playing 10 rounds
-for i in range(10):
-	printBoard(s)
-	if i%2:
-		print "BLACK", i
-		l =chessPlayer(s, 20)
-	else:
-		print "WHITE", i
-		l = chessPlayer(s, 10)
+# for i in range(10):
+# 	printBoard(s)
+# 	if i%2:
+# 		print "BLACK", i
+# 		l =chessPlayer(s, 20)
+# 	else:
+# 		print "WHITE", i
+# 		l = chessPlayer(s, 10)
 
-	print l[1]
-	print " "
-	s[l[1][1]] = s[l[1][0]]
-	s[l[1][0]] = 0
+# 	print l[1]
+# 	print " "
+# 	s[l[1][1]] = s[l[1][0]]
+# 	s[l[1][0]] = 0
 
-printBoard(s)
+# printBoard(s)
 
 #print bestMove(s, 10, True, 1, 4)
 #all in range(len(board)): can be optimized
