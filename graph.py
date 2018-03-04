@@ -17,6 +17,23 @@ class graph:
 			self.edges[to_idx][from_idx] = weight
 		#print self.edges
 
+	def BFS(self, start, visited):
+		t= []
+		line = [start]
+		for i in range(100000):
+			if i==len(self.line):
+				break
+			if line[i] in visited:
+				continue
+			#print self.line[i]
+			t += [line[i]]
+			visited += [line[i]]
+			for j in range(self.vertices):
+				if self.edges[line[i]][j] != 0 and self.edges[line[i]][j] != None:
+					line += [j]
+		return t
+
+
 	def traverse(self, start, typeBreadth):
 		#print self.edges
 		#still need to make sure start can be None
@@ -44,8 +61,16 @@ class graph:
 				
 		else:
 			self.visited =[]
-			self.dfs(start)
 			self.tot=[]
+			self.dfs(start)
+			
+		if start == None:
+			for i in range(len(self.vertices)):
+				if i not in self.tot:
+					if typeBreadth:
+						self.tot+=BFS(i, visited)
+					else:
+						self.dfs(i)
 		print self.tot
 
 	def dfs(self, index):
@@ -65,4 +90,4 @@ x.addEdge(0, 1, True, 1)
 x.addEdge(0, 3, True, 1)
 x.addEdge(3, 2, True, 1)
 x.addEdge(3, 1, True, 1)
-x.traverse(0, True)
+x.traverse(None, False)
