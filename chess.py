@@ -471,8 +471,8 @@ def bestMove(board, player, flipped, start, level, alpha, beta):
 			end = time.time()
 
 			elapsed = end - start
-			if elapsed > 9.7 and level != 3:
-				return globalmaxmin
+			#if elapsed > 9.7 and level != 4:
+			#	return globalmaxmin
 			#piece is the position the piece was in, move is where it wants to go
 			t = list(board)
 			t[move] = board[piece]
@@ -491,10 +491,10 @@ def bestMove(board, player, flipped, start, level, alpha, beta):
 				if beta<=alpha:
 					break
 			
-			if level == 3:
+			if level == 4:
 				listofmoves.append([ret, piece, move])
 
-	if level == 3:
+	if level == 4:
 		return listofmoves #change this later
 	return globalmaxmin
 
@@ -554,10 +554,10 @@ def chessPlayer(board, player):
 	#this is sorta like a lets play
 
 	if isWhite(player):
-		l =bestMove(board, 10, True, start, 3, -1000000, 1000000)
+		l =bestMove(board, 10, True, start, 4, -1000000, 1000000)
 		l.sort(reverse=True)
 	else:
-		l =bestMove(board, 20, False, start, 3, -1000000, 1000000)
+		l =bestMove(board, 20, False, start, 4, -1000000, 1000000)
 		l.sort()
 	
 	
@@ -576,8 +576,8 @@ def chessPlayer(board, player):
 	cand[0][1]=round(random.uniform(0.8, 1), 2)
 	#print cand
 	#print len(cand)
-	#print "best", l[0][0]
-	#print time.time() - start
+	print "best", l[0][0]
+	print time.time() - start
 	evaltree = [(round(random.uniform(0, 1), 2)) for k in range(len(cand))]
 	return [True, l[0][1:], cand, evaltree]
 '''
@@ -619,21 +619,20 @@ v = [
 # if a move puts you, or keeps you in check you cannot make that move
 #print GetPieceLegalMoves(s, 12)
 #letsPlay(t, 20)
-print chessPlayer(s, 20)
 # lets try playing 10 rounds
-# for i in range(10):
-# 	printBoard(s)
-# 	if i%2:
-# 		print "BLACK", i
-# 		l =chessPlayer(s, 20)
-# 	else:
-# 		print "WHITE", i
-# 		l = chessPlayer(s, 10)
+for i in range(17):
+	printBoard(s)
+	if i%2:
+		print "BLACK", i
+		l =chessPlayer(s, 20)
+	else:
+		print "WHITE", i
+		l = chessPlayer(s, 10)
 
-# 	print l[1]
-# 	print " "
-# 	s[l[1][1]] = s[l[1][0]]
-# 	s[l[1][0]] = 0
+	print l[1]
+	print " "
+	s[l[1][1]] = s[l[1][0]]
+	s[l[1][0]] = 0
 
 # printBoard(s)
 
