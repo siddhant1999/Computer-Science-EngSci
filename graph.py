@@ -83,6 +83,22 @@ class graph:
 			if self.edges[index][i] != 0 and self.edges[index][i] != None:
 				self.dfs(i)
 
+	def atob(self, a, b):
+		if a==b:
+			return True
+		for i in range(self.vertices):
+			if self.edges[self.line[a]][i] != 0 and self.edges[self.line[a]][i] != None:
+					isO = self.connectivity(i, b)
+					if isO:
+						return True
+		return False
+
+
+	def connectivity(self, vx, vy):
+
+		return [atob(vx, vy), atob(vy,vx)]
+		
+
 x = graph()
 
 x.addVertex(4)
