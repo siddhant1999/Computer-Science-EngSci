@@ -1,5 +1,5 @@
 class graph:
-	edges =[[None] * 1000 for i in range(1000)]
+	edges =[[None] * 3000 for i in range(3000)]
 	line=[]
 	visited =[]
 	tot=[]
@@ -102,8 +102,11 @@ class graph:
 	def atob(self, a, b):
 		if a==b:
 			return True
+		if a in self.visited:
+			return
+		self.visited += [a]
 		for i in range(self.vertices):
-			if self.edges[self.line[a]][i] != 0 and self.edges[self.line[a]][i] != None:
+			if self.edges[a][i] != 0 and self.edges[a][i] != None:
 				self.totpath.append(i)
 				isO = self.atob(i, b)
 
@@ -114,18 +117,24 @@ class graph:
 
 
 	def connectivity(self, vx, vy):
-
-		return [self.atob(vx, vy), self.atob(vy,vx)]
+		self.totpath = []
+		self.visited =[]
+		aj = self.atob(vx, vy)
+		self.visited =[]
+		ap = self.atob(vy,vx)
+		return [ab, ap]
 
 	def path(self, vx, vy):
 		ret = []
 		self.totpath =[vx]
+		self.visited =[]
 		if self.atob(vx,vy):
 			ret += [self.totpath]
 		else:
 			ret += [[]]
 
 		self.totpath =[vy]
+		self.visited =[]
 		if self.atob(vy,vx):
 			ret += [self.totpath]
 		else:
@@ -170,3 +179,4 @@ print "Breadth"
 print x.traverse(0,True)
 print "Breadth; start=None"
 print x.traverse(None,False)
+print x.path(0, 4)
