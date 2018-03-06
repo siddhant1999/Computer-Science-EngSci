@@ -88,15 +88,37 @@ class graph:
 			return True
 		for i in range(self.vertices):
 			if self.edges[self.line[a]][i] != 0 and self.edges[self.line[a]][i] != None:
-					isO = self.connectivity(i, b)
-					if isO:
-						return True
+				self.totpath.append(i)
+				isO = self.atob(i, b)
+
+				if isO:
+					return True
+				self.totpath = self.totpath[:-1]
 		return False
 
 
 	def connectivity(self, vx, vy):
 
-		return [atob(vx, vy), atob(vy,vx)]
+		return [self.atob(vx, vy), self.atob(vy,vx)]
+
+	def path(self, vx, vy):
+		ret = []
+		self.totpath =[vx]
+		if self.atob(vx,vy):
+			ret += [self.totpath]
+		else:
+			ret += [[]]
+
+		self.totpath =[vy]
+		if self.atob(vy,vx):
+			ret += [self.totpath]
+		else:
+			ret += [[]]
+
+		return ret
+
+
+
 		
 
 x = graph()
