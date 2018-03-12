@@ -24,7 +24,7 @@ unsigned char FSR(unsigned char x) {
     return r;
 }
 
-int cryp(char *data,unsigned int size,unsigned char password) {// change back to crypt later
+int crypt(char *data,unsigned int size,unsigned char password) {// change back to crypt later
     unsigned char prngVal = password;
     
     for (int i =0; i < size; i++) {
@@ -35,13 +35,12 @@ int cryp(char *data,unsigned int size,unsigned char password) {// change back to
 }
 
 int main() {
-    unsigned char a = '0';
-    /*for (int i = 0; i<128; i++) {
-        //printf("%c, %d, %d\n",a+i, a+i, FSR(a+i));
-        printf("%c, %d, %d\n",a+i, a+i, prng(a+i, 0xb8));
-    }*/
-    char data[] = {"saachi"};
-    cryp(data, 6, a);
+    unsigned char data[] = {"hello1"};
+    for (int i =0; i < 6; i++) {
+        printf("%d ", data[i]);
+    }
+    printf("\n");
+    crypt(data, 6, 'z');
     for (int i =0; i < 6; i++) {
         printf("%d ", data[i]);
     }
