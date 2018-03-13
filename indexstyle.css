@@ -1,0 +1,50 @@
+body {
+	font-size: 140%;
+	font-family: Calibri,Arial, Helvetica, sans-serif;
+	  -webkit-appearance: none; -moz-appearance: none;
+  /*display: block;*/
+  width: 100%;
+}
+
+h3,h4 {
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+
+@media (max-width: 767px) {
+
+select {
+  font-size: 240%;
+}
+
+
+}
+
+select {
+	margin-left: auto;
+	margin-right: auto;
+	font-size: 140%;
+}
+table {
+	width: 80%;
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 800px;
+}
+	table.mytable {
+		font-size: 130%;
+		border: 1px solid #CCC; 
+		font-family: Calibri, Arial, Helvetica, sans-serif;
+		margin-top: 5px;
+	} 
+	.mytable td {
+		padding: 4px;
+		margin: 3px;
+		border: 1px solid #000;
+	}
+	.mytable th {
+		background-color: #000; 
+		color: #FFF;
+		font-weight: bold;
+	}
