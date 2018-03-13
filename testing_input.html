@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="jquery-3.1.1.min.js"></script>
+</head>
+<style>
+
+input[type=text]:focus {
+    border: 1px solid #555;
+}
+
+div {
+    border-radius: 5px;
+    font-family: Arial;
+}
+
+</style>
+
+
+<body>
+
+
+<div>
+
+<div class="row">
+    <label for="row_count" class="col-sm-1">Rows</label>
+    <input type="number" onblur="register()" class="col-sm-1" id="rows" name="rows">
+</div><br>
+<div class="row">
+    
+    <label for="column_count" class="col-sm-1" onblur="register()">Columns</label>
+    <input type="number" onblur="register()" class="col-sm-1" id="columns" name="columns">
+</div>
+  
+</div>
+<script>
+    function register() {
+        var x = document.getElementById("rows");
+        var y = document.getElementById("columns");
+        if(x.value && y.value){
+            var display_table = 
+            for (var i = Things.length - 1; i >= 0; i--) {
+                Things[i]
+            }
+        }
+    }
+</script>
+
+
+</body>
+</html>

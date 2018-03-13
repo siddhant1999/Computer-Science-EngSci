@@ -1,0 +1,327 @@
+<html>
+<head>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+</head>
+
+<body>
+
+<!-- do all to lowercase first, before querying-->
+
+<select id="venture" class="selectpicker">
+
+<option value="A&#38amp;K Robotics" >A&#38K Robotics</option>
+<option value="Acerta" > Acerta</option>
+<option value="Ada">Ada</option>
+<option value="Alumni X	"> Alumni X</option>
+<option value="Automat" >Automat</option>
+<option value="Bridge Genomics" >Bridge Genomics</option>
+<option value="Citizen Hex" >Citizen Hex</option>
+<option value="Cohesic" >Cohesic</option>
+<option value="Datalogue" >Datalogue</option>
+<option value="Dat-uh" >Dat-uh</option>
+<option value="Deep Diagnostics" >Deep Diagnostics</option>
+<option value="Diligen" >Diligen</option>
+<option value="DOCTO">DOCTO</option>
+<option value="Eigen" >Eigen</option>
+<option value="Elucid Labs" >Elucid Labs</option>
+<option value="Feo">Feo</option>
+<option value="Fluent.ai" >Fluent.ai</option>
+<option value="FREDsense" >FREDsense</option>
+<option value="Fundmetric" >Fundmetric</option>
+<option value="Galaxy.Ai" >Galaxy.Ai</option>
+<option value="Gbatteries" >Gbatteries</option>
+<option value="H2nanO" >H2nanO</option>
+<option value="ICSPI">ICSPI</option>
+<option value="Knote" >Knote</option>
+<option value="Kyndi" >Kyndi</option>
+<option value="Landmine Boys" >Landmine Boys</option>
+<option value="MashUp Machine" >MashUp Machine</option>
+<option value="MedStack" >MedStack</option>
+<option value="MIMOSA" >MIMOSA</option>
+<option value="MyHEAT" >MYHEAT</option>
+<option value="Nix Sensor" >Nix Sensor</option>
+<option value="Pegasus" >Pegasus</option>
+<option value="Pervazive" > Pervazive</option>
+<option value="Plantiga" >Plantiga</option>
+<option value="QuWare" > QuWare</option>
+<option value="Retrievium" >Retrievium</option>
+<option value="Semantix" >Semantix</option>
+<option value="Spironix" >Spironix</option>
+<option value="Swift Medical" >Swift Medical</option>
+<option value="Synervoz" > Synervoz</option>
+<option value="Tendermint" >Tendermint</option>
+<option value="Tenstorrent" >Tenstorrent</option>
+<option value="TREXO Robotics" >TREXO Robotics</option>
+<option value="Vention" >Vention</option>
+<option value="Vertex.AI" >Vertex.AI</option>
+<option value="Xanadu" >Xanadu</option>
+<option value="Yazabi" >Yazabi</option>
+</select>
+
+<button id="subven" onclick="startSearch()">Submit</button>
+
+<div id="scheduleTable"></div>
+
+</body>
+</html>
+
+<script type="text/javascript">
+
+var allstrings = [];
+var har;
+var queryDate;
+var queryAM;
+
+function determineTime(obj){
+	console.log("I am here right now");
+	for (var i = 0; i < obj.length; i++) {
+		var poi = obj[i];
+		console.log("poi is: " + poi);
+		console.log(poi["is_AM"]);
+		queryDate = poi["Date"];
+		queryAM = poi["is_AM"];//30 or 31
+
+		//now that we know the date and am or pm we should query everything only pretaining to that date and only am or pm except when the actual name of the company appears in the name
+	}
+}
+
+function temp(str){
+	console.log("Here too");
+	$.ajax({
+        type: 'post',
+        async: false,
+        url: 'processQuery.php',
+        data: {
+            sqlQuery: str
+        },
+        success: function( data ) {
+        	console.log("Here is the data man:");
+            console.log(data);
+            console.log("transfering");
+            determineTime(data);
+            //console.log(allstrings);
+            //alert("Complete");
+        }
+    });
+}
+
+
+function startSearch(){
+
+	var name = $("#venture option:selected").val();
+	har = name;
+	//create the query
+	//console.log(name);
+
+	//First thing to determine is the date and AM or PM
+
+	var deterdate = "SELECT * FROM Meetings WHERE Venture_Name='" + name + "' AND Meeting_Number IS NOT NULL;";
+
+	temp(deterdate);
+
+
+
+	//var query = "SELECT * FROM Meetings WHERE LOWER(Venture_Name)=LOWER('" + name + "');";
+	var query = "SELECT * FROM Meetings WHERE Venture_Name='" + name +"' OR (Meeting_Number IS NULL AND is_AM='" + queryAM +  "' AND Date='"+ queryDate +"' ) ORDER BY Time_Start;" ;
+	//this query doesn't query everything we actually need
+	//we still need to query the track meetings and the general breaks/lunch etc...
+	//console.log(query);
+	//allstrings.push(query);
+	
+	theQuery(query);
+	
+}
+function theQuery(query){
+	console.log(query);
+	$.ajax({
+	        type: 'post',
+	        url: 'processQuery.php',
+	        async: false,
+	        data: {
+	            sqlQuery: query
+	            //sqlInserts: allstrings
+	        },
+	        success: function( data ) {
+	        	//console.log("Here is the data retrived:");
+	            console.log(data);
+	            process(data);
+	            //console.log(allstrings);
+	            //alert("Complete");
+	        }
+	    });
+}
+var prev1, prev2;
+
+function helper(time){
+	time = time.split(':'); // convert to array
+	
+	// fetch
+	var hours = Number(time[0]);
+	var minutes = Number(time[1]);
+	//var seconds = Number(time[2]);
+	
+	// calculate
+	var timeValue = "" + ((hours >12) ? hours - 12 : hours);  // get hours
+	timeValue += (minutes < 10) ? ":0" + minutes : ":" + minutes;  // get minutes
+	//timeValue += (seconds < 10) ? ":0" + seconds : ":" + seconds;  // get seconds
+	timeValue += (hours >= 12) ? " PM" : " AM";  // get AM/PM
+	return timeValue;
+}
+
+var isGrey = [];
+
+function process(obj){
+
+	var distable = "<table class='mytable'><thead><tr><th>Time</th><th>Venture</th><th>Discussion Leads</th></tr></thead><tbody>";
+	var prev1 = "";
+	var prev2 = "";
+
+
+	for (var i = 0; i < obj.length; i++) {
+		var arr = obj[i];
+		distable += "<tr class='row_" + i + "'>";
+		var a = helper(arr["Time_Start"]);
+		var b = helper(arr["Time_End"]);
+
+		//k so now that we have the times this is a good time to put in the breaks
+		//just check if the end time doesnt match up with the next start time, and if not add a break
+
+
+
+		if (prev1!=a && prev2 !=b) {
+
+			if (prev2 != a && prev2) {
+				//add break
+				//console.log("Need break here");
+				distable += "<td style='background-color: #ececec;'>" + prev2 + " - " + a +"</td><td style='background-color: #ececec;' colspan='2'>Break</td></tr>" + "<tr class='row_" + i + "'>";
+			}
+
+			prev1 = a;
+			prev2 = b;
+			var k = i+1;
+			var count =1;
+
+			if (k < obj.length) {
+				while(a == helper(obj[k]["Time_Start"]) && b== helper(obj[k]["Time_End"])){
+					count++;
+					k++;
+					if (k == obj.length) {
+						break;
+					}
+				}
+			}distable += "<td rowspan='"+ count +"'>" + a + " - " + b +"</td>";
+		}
+
+
+		if (arr["Meeting_Number"]) {
+			//meaning this is a specific individual meeting
+
+			distable += "<td colspan='2'>Individual Meeting with " + arr["Lead_1"];
+			for (var l = 2;l<4; l++) {
+				var tt = "Lead_" + l;
+				if (arr[tt]) {
+					distable += " and "  + arr[tt];
+				}
+				else break;
+
+			}
+
+			distable += " in <b>Room " + arr["Room_Number"] + "</b></td>";
+		}
+		else if (arr["Description"]) {
+			//this is a general activity to all
+			distable += "<td colspan='2'>" + arr["Description"] + "</td>";
+			isGrey.push(i);
+		}
+		else if(arr["Venture_Name"] && arr["Lead_1"]) {
+			//this is a track meeting
+			distable += "<td>" + arr["Venture_Name"] + "</td><td>" + arr["Lead_1"] + "</td>";
+		}
+		
+		/*for (var key in obj){
+    		var value = obj[key];
+			//we may not necessarily need to iterate over all o
+    		//document.write(" " + key + ": " + value);
+  		}*/
+  		distable += "</tr>";
+  		//document.write("<br> ");
+	}
+	distable += "</tbody></table>";
+
+	$("#scheduleTable").append("<h3><b><u>" + har + "</u></b></h3>");
+	$("#scheduleTable").append(distable);
+	for (var j = 0; j < isGrey.length; j++) {
+		var theid = ".row_" + isGrey[j];
+
+		$(theid).css("background-color", "#ececec");
+	}
+
+	$("#scheduleTable").append("<br><h4><b><u>REMINDER: </b></u> Please arrive at each of your meeting locations 10 minute early.</h4>");
+}
+
+</script>
+<!--
+Implement the wifi password thing
+
+-->
+
+
+<style type="text/css">
+
+body {
+	font-size: 140%;
+	font-family: Calibri,Arial, Helvetica, sans-serif;
+	  -webkit-appearance: none; -moz-appearance: none;
+  /*display: block;*/
+  width: 100%;
+}
+
+h3,h4 {
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+
+@media (max-width: 767px) {
+
+select {
+  font-size: 240%;
+}
+
+
+}
+
+select {
+	margin-left: auto;
+	margin-right: auto;
+	font-size: 140%;
+}
+table {
+	width: 75%;
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 800px;
+}
+	table.mytable {
+		font-size: 130%;
+		border: 1px solid #CCC; 
+		font-family: Calibri, Arial, Helvetica, sans-serif;
+		margin-top: 5px;
+	} 
+	.mytable td {
+		padding: 4px;
+		margin: 3px;
+		border: 1px solid #000;
+	}
+	.mytable th {
+		background-color: #000; 
+		color: #FFF;
+		font-weight: bold;
+	}
+</style>

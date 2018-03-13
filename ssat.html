@@ -1,0 +1,90 @@
+
+<html>
+<head>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+</head>
+<body>
+
+<textarea width="40%" id="correct" rows="40" cols="20" placeholder="Enter Question Number and Correct Answer
+
+1	A
+2	C
+3	B
+4	E
+5	D
+"></textarea>
+
+<textarea width="40%" id="student" rows="40" cols="20" placeholder="Enter Question Number and Student's Answer (Enter 'N' for No Answer)
+
+1	D
+2	C
+3	A
+4	E
+5	D
+"></textarea>
+
+<br>
+<select onchange="JumpToIt(this)">
+		<option value="">Verbal</option>
+
+		<option value="">Math</option>
+
+		<option value="">Reading</option></select>
+
+<button id="text_complete" onclick="process()">Import</button>
+
+</body>
+</html>
+
+<script type="text/javascript">
+
+var globalraw;
+var globalscaled;
+
+var correctAnswers = [];
+var studentAnswers = [];
+
+
+function process() {
+	var lines = $('#correct').val().split('\n');
+	var ans = $('#student').val().split('\n');
+	var correctcount= 0;
+	var max = 0;
+
+	for(var i = 0;i < lines.length;i++){
+		var vals = lines[i].split(/[ ,\t]+/);
+		if(vals.length != 2){
+			alert("Illegal Input\nPlease only enter a integer and a letter seperated by a comma, space, or tab");
+			return;
+		}
+		correctAnswers[vals[0]] = vals[1];
+	}
+	for(var i = 0;i < ans.length;i++){
+		var vals = ans[i].split(/[ ,\t]+/);
+		if(vals.length != 2){
+			alert("Illegal Input\nPlease only enter a integer and a letter seperated by a comma, space, or tab");
+			return;
+		}
+		studentAnswers[vals[0]] = vals[1];
+		if (correctAnswers[vals[0]] == vals[1]) {correctcount++}
+	}
+var score = correctAnswers.length-1;
+
+for (var i = 1; i < correctAnswers.length; i++) {
+	if (correctAnswers[i] != studentAnswers[i]) {
+		if (studentAnswers[i] == 'N') {
+			score = score-1;
+		}
+		else score = score-1.25;
+
+		document.write("<b>" + i + ":  " + correctAnswers[i] + "  " + studentAnswers[i] + "</b><br>");
+	}
+	else document.write(i + ":  " + correctAnswers[i] + "  " + studentAnswers[i] + "<br>");
+}
+	document.write( "You got " + correctcount + " out of " + ans.length + " correct<br>");
+	document.write( "With a raw score of " + score);
+}
+
+</script>
