@@ -1,11 +1,3 @@
-//
-//  main.c
-//  LabVI
-//
-//  Created by Siddhant Jain on 2018-03-10.
-//  Copyright © 2018 Siddhant Jain. All rights reserved.
-//
-
 #include <stdio.h>
 
 unsigned char prng(unsigned char x, unsigned char pattern) {
@@ -25,9 +17,14 @@ unsigned char FSR(unsigned char x) {
 }
 
 int crypt(char *data,unsigned int size,unsigned char password) {// change back to crypt later
-    unsigned char prngVal = password;
-    
-    for (int i =0; i < size; i++) {
+	int i = 0;
+	unsigned char prngVal = password;
+	if (password ==0)
+	{
+		return -1;
+	}
+
+    for (; i < size; i++) {
         prngVal = prng(prngVal,0xb8);
         data[i] = (data[i]) ^ prngVal;
     }
