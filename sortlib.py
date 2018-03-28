@@ -19,10 +19,17 @@ def reheapify(u,end):
       return True
 
 def heap_sort(u):
-   
-   heapify(u)
+  n = len(u)
+ 
+  for i in range(n, -1, -1):
+    heapify(u, n, i)
+
+  # One by one extract elements
+  for i in range(n-1, 0, -1):
+    u[i], u[0] = u[0], u[i]   # swap
+    heapify(u, i, 0)
    #reheapify(u,end)
-   return True
+  return True
 
 def merge_sort(u):
    return True
