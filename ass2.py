@@ -14,12 +14,12 @@ nu = 0.01
 dt = sigma * dx * dy / nu
 
 print dt
-def equation_of_motion(u, v, …):
+def equation_of_motion(u, v, dx, dy, dt):
 	# generate the next state as a function of the old state
 	un = u.copy()
 	vn = v.copy()
-	u[1:-1, 1:-1] = # see reference
-	v[1:-1, 1:-1] = # see reference
+	u[1:-1, 1:-1] = (un[1:-1, 1:-1]-dt/dx * un[1:-1, 1:-1]*(un[1:-1, 1:-1] - un[1:-1, 0:-2])-dt/dy * vn[1:-1, 1:-1]*(un[1:-1, 1:-1]-un[0:-2, 1:-1])+nu*dt/ dx**2 *(un[1:-1, 2:] - 2 * un[1:-1, 1:-1] + un[1:-1, 0:-2])+nu * dt/ dy**2 *(un[2:, 1:-1] - 2 * un[1:-1, 1:-1] + un[0:-2, 1:-1]))
+	v[1:-1, 1:-1] = (vn[1:-1, 1:-1]-dt/dx * un[1:-1, 1:-1]*(vn[1:-1, 1:-1] - vn[1:-1, 0:-2])-dt/dy * vn[1:-1, 1:-1]*(vn[1:-1, 1:-1]-vn[0:-2, 1:-1])+nu*dt/ dx**2 *(vn[1:-1, 2:] - 2 * vn[1:-1, 1:-1] + vn[1:-1, 0:-2])+nu * dt/ dy**2 *(vn[2:, 1:-1] - 2 * vn[1:-1, 1:-1] + vn[0:-2, 1:-1]))
 	return (u,v)
 
 def boundary(u, v, nozzle_u, nozzle_v, nx, ny, t_step):
@@ -64,3 +64,8 @@ pyplot.quiver(u[::2], v[::2], norm(magnitude), scale=60,
 cmap=pyplot.cm.jet)
 ax.savefig('frame'+str(i).zfill(5)+'.png',dpi=300)
 ax.clear()
+
+
+
+
+
