@@ -42,8 +42,8 @@ def boundary(u, v, nozzle_u, nozzle_v, nx, ny, t_step):
 
 def simulate(f, u, v, …, steps):
 	for i in range(steps):
-	(u, v) = equation_of_motion(u, v, …)
-	(u, v) = boundary(u, v, …, i)
+		(u, v) = equation_of_motion(u, v, …)
+		(u, v) = boundary(u, v, …, i)
 	return (u, v)
 
 
