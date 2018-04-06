@@ -1,9 +1,66 @@
+%Christopher Knight, 1004113103
+%Eassa Arman Saedi, 1004115325
+%Siddhant Jain, 1004070024
+%Clearing command window, workspace etc.
+close all;
+clear;
+clc;
+%Declaring the variables and matrices that I will need.
+T = 1000;
+dt = 1;
+f = 0.125;
+I = eye(5);
+A = zeros(5);
+time = 0:T;
+%Q3,4,5 For both cases, the pollution eventually goes to zero for all the lakes.
+%However the a = 0.01 case goes to 0 much slower than the a = 0.02 case 
+%since the flow rate is slower.
+for a = [0.01 0.02]
+    %Declare the b vector and A matrix for both values of a
+    b = [0.125;0;0;0;0];
+    X = zeros(5,T+1);
+    A(1,1) = -2*a;
+    A(2,2) = -a;
+    A(3,3) = -a;
+    A(4,4) = -a;
+    A(5,5) = -a;
+    A(2,4) = a;
+    A(3,2) = a;
+    A(4,1) = a; 
+    A(4,5) = a;
+    A(5,1) = a;
+    %Execute implicit euler scheme on the X matrix one column at a time 
+    for i = 1:T
+        X(:,i+1) = (I-dt*A)\(X(:,i)+dt*b);
+        if (i == 24)
+            b = [0;0;0;0;0];
+        end
+    end
+    %Plot both cases
+    figure
+    plot(time,X(1,:),time,X(2,:),time,X(3,:),time,X(4,:),time,X(5,:))
+    xlabel('Time (hours)');
+    ylabel('Pollution (kgs)');
+    legend('Michigan','Erie','Ontario','Huron','Superior');
+    if a == 0.01
+        title('Case 1: Pollution vs Time for a = 0.01');
+    else
+        title('Case 2: Pollution vs Time for a = 0.02');
+    end
+end
+%QUESTION 9
 A=[0 0 0 1 0 0;
    0 0 0 0 1 0;
    0 0 0 0 0 1;
   -2 1 0 0 0 0;
   0.5 -1.5 1 0 0 0;
   0 2.0/3.0 -4.0/3.0 0 0 0];
+
+e = eig(A)
+[V,D] = eig(A)
+
+%QUESTION 11
+
 T=100;
 dt = 0.1;
 t = 0:dt:T;
@@ -25,3 +82,231 @@ xlabel('Time (s)');
 ylabel('Displacement (m)');
 legend('x1', 'x2', 'x3');
 title('Displacements of Springs Over Time');
+
+
+%QUESTION_13
+[B] = uniformSymMatrix(2,3);
+% Declaring Variables for QUESTION_14
+%Matrix Dimension
+x = 2;
+%Number of values in Upper Triangular
+rN = (x*(x+1))/2;
+%Number or Matrices Created
+num = 100;
+%To set Histogram Bar widths
+delta = 15;
+%Empty array of n-by-n matrices
+array = zeros(x,x,num);
+%Creation of matrices and placement in array
+for i1 = 1:num
+    [B] = uniformSymMatrix(x,rN);
+    array(:,:,i1) = B;
+end
+
+%QUESTION_14 Graphs
+%Traces Histogram
+tracehisto(num,array,delta)
+title('Traces of 2x2 Matrices (Uniform Distribution)')
+%Determinants Histogram
+dethisto(num,array,delta)
+title('Determinants of 2x2 Matrices (Uniform Distribution)')
+%Eigenvalues Histogram
+eigenhisto(num,array,delta)
+title('Eigenvalues of 2x2 Matrices (Uniform Distribution)')
+%Declaring Variables for QUESTION_15
+x = 5;
+rN = (x*(x+1))/2;
+num = 100;
+delta = 25;
+array = zeros(x,x,num);
+for i1 = 1:num
+    [B] = uniformSymMatrix(x,rN);
+    array(:,:,i1) = B;
+end
+
+%QUESTION_15 Graphs
+%Eigenvalues Histogram
+eigenhisto(num,array,delta)
+title('Eigenvalues of 5x5 Matrices (Uniform Distribution)')
+%Declaring Variables for QUESTION_16
+x = 100;
+rN = (x*(x+1))/2;
+num = 100;
+delta = 100;
+array = zeros(x,x,num);
+for i1 = 1:num
+    [B] = uniformSymMatrix(x,rN);
+    array(:,:,i1) = B;
+end
+
+%QUESTION_16 Graphs
+%Eigenvalues Histogram
+eigenhisto(num,array,delta)
+title('Eigenvalues of 100x100 Matrices (Uniform Distribution)')
+%QUESTION_17
+%The following histograms above indicate that the eigenvalues of matrices with random u
+%have a distribution of eigenvalues that is shaped as a normal distribution
+
+%QUESTION_18
+%An N by N matrix with values ranging between -1 and 1 can have an extreme maximum eige
+%For example a 2-by-2 matrix with first row 1,-1 and second row -1,1 has an eigenvalue
+
+% Declaring Variables for QUESTION_19
+x = 2;
+%Arbitrary Standard Deviation for Normal Distribution
+std = 1;
+rN = (x*(x+1))/2;
+num = 100;
+delta = 15;
+array = zeros(x,x,num);
+for i1 = 1:num
+    [B] = normalSymMatrix(x,rN,std);
+    array(:,:,i1) = B;
+end
+
+%QUESTION_19 Graphs
+%Eigenvalues Histogram
+eigenhisto(num,array,delta)
+title('Eigenvalues of 2x2 Matrices (Normal Distribution)')
+% Declaring Variables for QUESTION_20
+x = 5;
+std = 1;
+rN = (x*(x+1))/2;
+num = 100;
+delta = 25;
+array = zeros(x,x,num);
+for i1 = 1:num
+    [B] = normalSymMatrix(x,rN,std);
+    array(:,:,i1) = B;
+end
+
+%QUESTION_20 Graphs
+%Eigenvalues Histogram
+eigenhisto(num,array,delta)
+title('Eigenvalues of 5x5 Matrices (Normal Distribution)')
+% Declaring Variables for QUESTION_21
+x = 100;
+std = 1;
+rN = (x*(x+1))/2;
+num = 100;
+delta = 100;
+array = zeros(x,x,num);
+for i1 = 1:num
+    [B] = normalSymMatrix(x,rN,std);
+    array(:,:,i1) = B;
+end
+
+%QUESTION_21 Graphs
+%Eigenvalues Histogram
+eigenhisto(num,array,delta)
+title('Eigenvalues of 100x100 Matrices (Normal Distribution)')
+%QUESTION_22
+%The histograms above indicate that whether the values of a
+%random square matrix have a uniform or a normal distribution,
+%that the eigenvalue distribution will approach a normal distribution
+%as the size of the matrices increase and the "randomness" of
+%the matrix values grow closer to their respective distribution,
+%whether it be normal or uniform
+
+%Functions Used for the questions above
+
+function [B] = uniformSymMatrix(x, rN)
+    %Create x-by-x matrix of ones
+    A = ones(x);
+    %Transform into upper triangular
+    B = triu(A);
+    %Generate array of random entries with uniform distribution between -1 and 1
+    r = -1 + (1+1)*rand(rN,1);
+    %q is variable for r-vector traversal
+    q = 1;
+    for i = 1:x
+        for j =  1:x
+        if j >= i
+            %Place random values into upper triangular matrix
+            B(i,j) = r(q,1); 
+            %increase q
+            q = q+1;
+            %Create Symmetry
+            B(j,i) = B(i,j);
+        end
+        end 
+    end
+end
+
+%Histogram of Traces Function
+function [] = tracehisto(num,array,delta)
+    %Make empty column vector of number of matrices being tested;
+    %to be filled with trace values
+    Tarray = zeros(num,1);
+    for i2 = 1:num
+        %Extract matrix from array of matrices being tested
+        a = array(:,:,i2);
+        %Set trace value of matrix as a value in array of traces
+        Tarray(i2,1)=trace(a);
+    end
+    %Make historgam
+    figure
+    histogram(Tarray,delta);
+    xlabel ('Trace Value');
+    ylabel ('Number of Occurances');
+end
+
+%Histogram of Determinants Function
+function [] = dethisto(num,array,delta)
+    %Make empty column vector of number of matrices being tested;
+    %to be filled with determinants
+    Darray = zeros(num,1);
+    for i2 = 1:num
+        %Extract matrix from array of matrices being tested
+        a = array(:,:,i2);
+        %Set determinant value of matrix as a value in array of determinants
+        Darray(i2,1)=det(a);
+    end
+    %Make historgam
+    figure
+    histogram(Darray,delta);
+    xlabel ('Determinant Value');
+    ylabel ('Number of Occurances');
+end
+
+%Histogram of Eigenvalues Function
+function [] = eigenhisto(num,array,delta)
+    %Make empty array; to be filled with determinants
+    Earray = [];
+    for i2 = 1:num
+        %Extract matrix from array of matrices being tested
+        a = array(:,:,i2);
+        tempArray=eig(a);
+        %Concatenate eigenvalue of matrix as a value in array of eigenvalues
+        Earray= vertcat(Earray,tempArray);
+    end
+    %Make Histogram
+    figure
+    histogram(Earray,delta);
+    xlabel ('Eigenvalue');
+    ylabel ('Number of Occurances');
+end
+
+function [B] = normalSymMatrix(x, rN, std)
+    %Create x-by-x matrix of ones
+    A = ones(x);
+    %Transform into upper triangular
+    B = triu(A);
+    %Generate array of random entries with normal distribution
+    %and standard deviation std
+    r = normrnd(0,std,rN,1);
+    %q is variable for r-vector traversal
+    q = 1;
+    for i = 1:x
+        for j =  1:x
+        if j >= i
+            %Place random values into upper triangular matrix
+            B(i,j) = r(q,1);
+            %Increase q
+            q = q+1;
+            %Create Symmetry
+            B(j,i) = B(i,j);
+        end
+        end 
+    end
+end
