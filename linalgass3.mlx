@@ -1,4 +1,3 @@
-
 A=[0 0 0 1 0 0;
    0 0 0 0 1 0;
    0 0 0 0 0 1;
@@ -15,17 +14,13 @@ SOL(3,1) = 50.0*3.0/4.0;
 SOL(4,1) = 10.0;
 SOL(5,1) = -10.0;
 SOL(6,1) = 10.0;
-b=[0;0;0;0;-10;40;];
+b=[0;0;0;0;-5;40;];
 I = eye(6);
 
-for i = 1:T
+for i = 1:T/dt
         SOL(:,i+1) = (I-dt*A)\(SOL(:,i)+dt*b);
 end
-plot(t,SOL(1,:),"--k")
-hold on
-plot(t,SOL(2,:),"--r")
-hold on
-plot(t,SOL(3,:),"--b")
+plot(t,SOL(1,:), t,SOL(2,:), t,SOL(3,:))
 xlabel('Time (s)');
 ylabel('Displacement (m)');
 legend('x1', 'x2', 'x3');
